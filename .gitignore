@@ -1,0 +1,25 @@
+HELP.md
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+# IntelliJ project files
+out
+gen
+target
+*.class
+
+*.log
+.settings
+.project
+logs
+job
+
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+
