@@ -1,0 +1,34 @@
+server:
+  port: 10010  #端口
+  tomcat:
+    uri-encoding: UTF-8   #服务编码
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+
+logging:
+  level:
+    com.pajamas: debug
+  pattern:
+    dateformat: HH:mm:ss:SSS
+  file:
+    path: "logs/${spring.application.name}"
+
+pj:
+  jwt:
+    location: classpath:pj.jks
+    alias: pj
+    password: pj1234
+    tokenTTL: 30m
+  auth:
+    excludePaths:
+      - /users/login

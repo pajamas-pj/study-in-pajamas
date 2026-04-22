@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.pajamas.common.config.MyBatisConfig,\
+  com.pajamas.common.config.MvcConfig,\
+  com.pajamas.common.config.JsonConfig

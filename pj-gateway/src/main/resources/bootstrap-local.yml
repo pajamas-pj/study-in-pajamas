@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    nacos:
+      server-addr: 192.168.150.120:8848 # nacos注册中心
+
+logging:
+  level:
+    com.pajamas: debug
