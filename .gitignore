@@ -1,25 +1,22 @@
-HELP.md
-
 ### IntelliJ IDEA ###
+# 忽略 IDEA 的配置文件
 .idea
-*.iws
 *.iml
-*.ipr
-# IntelliJ project files
-out
-gen
+# 忽略 IDEA 的默认输出目录
+out/
+# 忽略自动生成代码目录
+gen/
+### Maven ###
+# 忽略编译生成的 target 目录
 target
-*.class
-
-*.log
-.settings
-.project
-logs
-job
-
-target/
+# 保留 Maven Wrapper 的 jar 包
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-
+### Java ###
+*.class
+*.log
+### Eclipse ###
+.settings/
+.project
+.classpath
+### Logs ###
+logs/
