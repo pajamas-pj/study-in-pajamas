@@ -1,0 +1,30 @@
+package com.pajamas.learn.service;
+
+import com.pajamas.common.domain.PageDTO;
+import com.pajamas.common.domain.PageQuery;
+import com.pajamas.learn.domain.po.LearningLesson;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.pajamas.learn.domain.vo.LearningLessonVO;
+
+import java.util.List;
+
+/**
+ * <p>
+ * 学生课程表 服务类
+ * </p>
+ *
+ * @author lipengjie
+ * @since 2026-04-23
+ */
+public interface ILearningLessonService extends IService<LearningLesson> {
+
+    void addUserLessons(Long userId, List<Long> courseIds);
+
+    PageDTO<LearningLessonVO> queryMyLessons(PageQuery query);
+
+    void deleteLessonByCourseId(Long courseId);
+
+    LearningLessonVO queryNowLearningLesson();
+
+    LearningLessonVO queryLessonByCourseId(Long courseId);
+}

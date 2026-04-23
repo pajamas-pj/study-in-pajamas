@@ -47,7 +47,17 @@ public class PageQuery {
     }
 
     public <T> Page<T> toMpPage(String defaultSortBy, Boolean isAsc) {
-        return toMpPage(new OrderItem(defaultSortBy, isAsc));
+        //前端是否有排序字段
+        if (StringUtils.isBlank(sortBy)){
+            sortBy = defaultSortBy;
+            this.isAsc = isAsc;
+        }
+        Page<T> page = new Page<>(pageNo, pageSize);
+        OrderItem orderItem = new OrderItem();
+        orderItem.setAsc(this.isAsc);
+        orderItem.setColumn(sortBy);
+        page.addOrder(orderItem);
+        return page;
     }
     public <T> Page<T> toMpPageDefaultSortByCreateTimeDesc() {
         return toMpPage("create_time", false);

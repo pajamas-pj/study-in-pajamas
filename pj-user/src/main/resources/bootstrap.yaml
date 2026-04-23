@@ -13,6 +13,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
+  rabbitmq:
+    host: 192.168.150.120
+    port: 5672
+    virtual-host: /hamll
+    username: itheima
+    password: 123321
+    listener:
+      simple:
+        prefetch: 1
 
 mybatis-plus:
   configuration:
@@ -55,3 +64,6 @@ pj:
 
 seata:
   enabled: false
+feign:
+  okhttp:
+    enabled: true
