@@ -1,5 +1,6 @@
 package com.pajamas.user.service.impl;
 
+import com.alibaba.csp.sentinel.util.StringUtil;
 import com.pajamas.common.exception.BadRequestException;
 import com.pajamas.common.exception.ForbiddenException;
 import com.pajamas.user.config.JwtProperties;
@@ -48,8 +49,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (user.getStatus() == UserStatus.FROZEN) {
             throw new ForbiddenException("用户被冻结");
         }
+//        // 4.校验密码
+//        if (!passwordEncoder.matches(password, user.getPassword())) {
+//            throw new BadRequestException("用户名或密码错误");
+//        }
         // 4.校验密码
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!StringUtil.equals(password, user.getPassword())) {
             throw new BadRequestException("用户名或密码错误");
         }
         // 5.生成TOKEN

@@ -8,8 +8,8 @@ import lombok.Getter;
 
 @Getter
 public enum UserStatus {
-    FROZEN(1, "正常"),
-    NORMAL(2, "冻结"),
+    NORMAL(1, "正常"),
+    FROZEN(2, "冻结"),
     ;
     @EnumValue
     @JsonValue
@@ -23,10 +23,10 @@ public enum UserStatus {
 
     public static UserStatus of(int value) {
         if (value == 1) {
-            return FROZEN;
+            return NORMAL;
         }
         if (value == 2) {
-            return NORMAL;
+            return FROZEN;
         }
         throw new BadRequestException("账户状态错误");
     }

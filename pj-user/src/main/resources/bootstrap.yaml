@@ -36,7 +36,7 @@ knife4j:
         group-name: default
         api-rule: package
         api-rule-resources:
-          - com.pajamas.controller
+          - com.pajamas.user.controller
 
 logging:
   level:
@@ -52,3 +52,6 @@ pj:
     alias: pj
     password: pj1234
     tokenTTL: 30m
+
+seata:
+  enabled: false

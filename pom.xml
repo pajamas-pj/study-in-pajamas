@@ -12,7 +12,6 @@
     <description>studyinpj</description>
 
     <modules>
-
         <module>pj-gateway</module>
         <module>pj-common</module>
         <module>pj-user</module>
@@ -80,7 +79,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 
     <dependencies>
         <!-- lombok 管理 -->
