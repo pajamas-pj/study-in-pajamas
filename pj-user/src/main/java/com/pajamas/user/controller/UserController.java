@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2026-04-22
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @Api(tags = "用户相关接口")
 @RequiredArgsConstructor
 public class UserController {
