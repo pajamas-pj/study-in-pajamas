@@ -32,22 +32,22 @@ public class   LearningLessonController {
         return lessonService.queryMyLessons(query);
     }
 
+
+    @GetMapping("/now")
+    @ApiOperation("查询最近学习的课程")
+    public LearningLessonVO queryNowLearningLesson(PageQuery query){
+        return lessonService.queryNowLearningLesson();
+    }
+
+    @ApiOperation("根据id查询指定课程的学习状态")
+    @GetMapping("/{courseId}")
+    public LearningLessonVO queryLessonByCourseId(@PathVariable("courseId") Long courseId){
+        return lessonService.queryLessonByCourseId(courseId);
+    }
+
     @DeleteMapping("/{courseId}")
     @ApiOperation("删除用户课表中指定课程")
     public void deleteLessonByCourseId(@PathVariable("courseId") Long courseId){
         lessonService.deleteLessonByCourseId(courseId);
-    }
-
-    //TODO
-    @GetMapping("/now")
-    @ApiOperation("查询当前正在学习的课程")
-    public LearningLessonVO queryNowLearningLesson(PageQuery query){
-        return lessonService.queryNowLearningLesson();
-    }
-    //TODO
-    @ApiOperation("查询用户课表中指定课程状态")
-    @GetMapping("/{courseId}")
-    public LearningLessonVO queryLessonByCourseId(@PathVariable("courseId") Long courseId){
-        return lessonService.queryLessonByCourseId(courseId);
     }
 }

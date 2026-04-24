@@ -1,8 +1,10 @@
 package com.pajamas.api.client.course;
 
+import com.pajamas.api.dto.course.CourseFullInfoDTO;
 import com.pajamas.api.dto.course.CourseSimpleInfoDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -18,4 +20,17 @@ public interface CourseClient {
      */
     @GetMapping("/courses/simpleInfo/list")
     List<CourseSimpleInfoDTO> getSimpleInfoList(@RequestParam("ids") Iterable<Long> ids);
+
+
+    /**
+     * 根据课程id，获取课程、目录、教师信息
+     * @param id 课程id
+     * @return 课程信息、目录信息、教师信息
+     */
+    @GetMapping("/course/{id}")
+    CourseFullInfoDTO getCourseInfoById(
+            @PathVariable("id") Long id,
+            @RequestParam(value = "withCatalogue", required = false) boolean withCatalogue,
+            @RequestParam(value = "withTeachers", required = false) boolean withTeachers
+    );
 }

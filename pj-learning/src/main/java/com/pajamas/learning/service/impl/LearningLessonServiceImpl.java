@@ -2,16 +2,21 @@ package com.pajamas.learning.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pajamas.api.client.course.CatalogueClient;
 import com.pajamas.api.client.course.CourseClient;
+import com.pajamas.api.dto.course.CataSimpleInfoDTO;
+import com.pajamas.api.dto.course.CourseFullInfoDTO;
 import com.pajamas.api.dto.course.CourseSimpleInfoDTO;
 import com.pajamas.common.domain.PageDTO;
 import com.pajamas.common.domain.PageQuery;
 import com.pajamas.common.exception.BadRequestException;
+import com.pajamas.common.exception.BizIllegalException;
 import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.UserContext;
 import com.pajamas.learning.domain.po.LearningLesson;
 import com.pajamas.learning.domain.vo.LearningLessonVO;
+import com.pajamas.learning.enums.LessonStatus;
 import com.pajamas.learning.mapper.LearningLessonMapper;
 import com.pajamas.learning.service.ILearningLessonService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,6 +44,8 @@ import java.util.stream.Collectors;
 public class LearningLessonServiceImpl extends ServiceImpl<LearningLessonMapper, LearningLesson> implements ILearningLessonService {
 
     private final CourseClient courseClient;
+
+    private final CatalogueClient catalogueClient;
 
     @Override
     @Transactional
@@ -100,6 +107,59 @@ public class LearningLessonServiceImpl extends ServiceImpl<LearningLessonMapper,
     }
 
     @Override
+    public LearningLessonVO queryNowLearningLesson() {
+        //1.获取登录用户id
+        Long userId = UserContext.getUser();
+        //2.查询当前正在学习的课程
+        // 查询正在学习的课程 select * from xx where user_id = #{userId} AND status = 1 order by latest_learn_time limit 1
+        LearningLesson lesson = lambdaQuery()
+                .eq(LearningLesson::getUserId, userId)
+                .eq(LearningLesson::getStatus, LessonStatus.LEARNING.getValue())
+                .orderByDesc(LearningLesson::getLatestLearnTime)
+                .last("limit 1")
+                .one();
+        if(lesson == null){
+            return null;
+        }
+        //远程调用课程服务 给vo中的课程名 封面 章节数 赋值
+        CourseFullInfoDTO cInfo = courseClient.getCourseInfoById(lesson.getCourseId(), false, false);
+        if (cInfo == null) {
+            throw new BizIllegalException("课程不存在");
+        }
+        //3.封装VO
+        LearningLessonVO vo = BeanUtils.copyBean(lesson, LearningLessonVO.class);
+        //3.1课表中的课程数量
+        Integer count = lambdaQuery().eq(LearningLesson::getUserId, userId).count();
+        vo.setCourseAmount(count);
+
+        //3.2最近一次小结编号
+        Long latestSectionId = lesson.getLatestSectionId();
+        List<CataSimpleInfoDTO> cataInfos =
+                catalogueClient.batchQueryCatalogue(CollUtils.singletonList(latestSectionId));
+        vo.setLatestSectionIndex(cataInfos.get(0).getCIndex());
+        //3.3最近一次小结名称
+        vo.setLatestSectionName(cataInfos.get(0).getName());
+        return vo;
+    }
+
+    @Override
+    public LearningLessonVO queryLessonByCourseId(Long courseId) {
+        //1.获取当前登录用户id
+        Long userId = UserContext.getUser();
+        //2.查询课表
+        LearningLesson lesson = lambdaQuery()
+                .eq(LearningLesson::getUserId, userId)
+                .eq(LearningLesson::getCourseId, courseId)
+                .one();
+        if (lesson == null) {
+            return null;
+        }
+        // po转vo返回
+        LearningLessonVO vo = BeanUtils.copyProperties(lesson, LearningLessonVO.class);
+        return vo;
+    }
+
+    @Override
     public void deleteLessonByCourseId(Long courseId) {
         // 1. 获取当前用户
         Long userId = UserContext.getUser();
@@ -109,15 +169,5 @@ public class LearningLessonServiceImpl extends ServiceImpl<LearningLessonMapper,
         wrapper.eq("user_id", userId);
         wrapper.eq("course_id", courseId);
         remove(wrapper);
-    }
-
-    @Override
-    public LearningLessonVO queryNowLearningLesson() {
-        return null;
-    }
-
-    @Override
-    public LearningLessonVO queryLessonByCourseId(Long courseId) {
-        return null;
     }
 }
