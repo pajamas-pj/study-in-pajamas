@@ -1,10 +1,10 @@
-package com.pajamas.learn.mq;
+package com.pajamas.learning.mq;
 
 
 import com.pajamas.api.dto.trade.OrderBasicDTO;
 import com.pajamas.common.constants.MqConstants;
 import com.pajamas.common.utils.CollUtils;
-import com.pajamas.learn.service.ILearningLessonService;
+import com.pajamas.learning.service.ILearningLessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;

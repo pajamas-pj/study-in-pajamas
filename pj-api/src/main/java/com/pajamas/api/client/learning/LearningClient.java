@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
         fallbackFactory = LearningClientFallback.class,
         configuration = DefaultFeignConfig.class)
 public interface LearningClient {
+
     /**
      * 统计课程学习人数
      * @param courseId 课程id
@@ -25,4 +26,5 @@ public interface LearningClient {
      */
     @GetMapping("/lessons/{courseId}/valid")
     Long isLessonValid(@PathVariable("courseId") Long courseId);
+
 }

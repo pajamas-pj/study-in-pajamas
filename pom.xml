@@ -15,7 +15,7 @@
         <module>pj-gateway</module>
         <module>pj-common</module>
         <module>pj-user</module>
-        <module>pj-learn</module>
+        <module>pj-learning</module>
         <module>pj-api</module>
     </modules>
     <!-- 继承 Spring Boot 父工程 -->

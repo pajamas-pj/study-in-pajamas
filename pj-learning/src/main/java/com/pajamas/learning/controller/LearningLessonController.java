@@ -1,10 +1,10 @@
-package com.pajamas.learn.controller;
+package com.pajamas.learning.controller;
 
 
 import com.pajamas.common.domain.PageDTO;
 import com.pajamas.common.domain.PageQuery;
-import com.pajamas.learn.domain.vo.LearningLessonVO;
-import com.pajamas.learn.service.ILearningLessonService;
+import com.pajamas.learning.domain.vo.LearningLessonVO;
+import com.pajamas.learning.service.ILearningLessonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +38,13 @@ public class   LearningLessonController {
         lessonService.deleteLessonByCourseId(courseId);
     }
 
+    //TODO
     @GetMapping("/now")
     @ApiOperation("查询当前正在学习的课程")
     public LearningLessonVO queryNowLearningLesson(PageQuery query){
         return lessonService.queryNowLearningLesson();
     }
-
+    //TODO
     @ApiOperation("查询用户课表中指定课程状态")
     @GetMapping("/{courseId}")
     public LearningLessonVO queryLessonByCourseId(@PathVariable("courseId") Long courseId){

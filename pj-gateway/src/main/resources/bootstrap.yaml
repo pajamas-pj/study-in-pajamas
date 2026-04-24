@@ -15,7 +15,7 @@ spring:
           predicates:
             - Path=/users/**
         - id: learn-service
-          uri: lb://learn-service
+          uri: lb://learning-service
           predicates:
             - Path=/learning-lesson/**
 

@@ -1,6 +1,6 @@
-package com.pajamas.learn.mapper;
+package com.pajamas.learning.mapper;
 
-import com.pajamas.learn.domain.po.LearningLesson;
+import com.pajamas.learning.domain.po.LearningLesson;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

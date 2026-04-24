@@ -1,4 +1,4 @@
-package com.pajamas.learn.domain.po;
+package com.pajamas.learning.domain.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
-import com.pajamas.learn.enums.LessonStatus;
-import com.pajamas.learn.enums.PlanStatus;
+import com.pajamas.learning.enums.LessonStatus;
+import com.pajamas.learning.enums.PlanStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

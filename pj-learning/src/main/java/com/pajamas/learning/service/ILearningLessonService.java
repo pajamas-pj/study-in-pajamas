@@ -1,10 +1,10 @@
-package com.pajamas.learn.service;
+package com.pajamas.learning.service;
 
 import com.pajamas.common.domain.PageDTO;
 import com.pajamas.common.domain.PageQuery;
-import com.pajamas.learn.domain.po.LearningLesson;
+import com.pajamas.learning.domain.po.LearningLesson;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pajamas.learn.domain.vo.LearningLessonVO;
+import com.pajamas.learning.domain.vo.LearningLessonVO;
 
 import java.util.List;
 

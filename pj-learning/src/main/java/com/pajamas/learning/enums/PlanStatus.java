@@ -1,4 +1,4 @@
-package com.pajamas.learn.enums;
+package com.pajamas.learning.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonCreator;

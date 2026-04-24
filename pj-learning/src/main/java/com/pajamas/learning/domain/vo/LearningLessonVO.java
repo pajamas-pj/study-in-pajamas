@@ -1,8 +1,8 @@
-package com.pajamas.learn.domain.vo;
+package com.pajamas.learning.domain.vo;
 
 
-import com.pajamas.learn.enums.LessonStatus;
-import com.pajamas.learn.enums.PlanStatus;
+import com.pajamas.learning.enums.LessonStatus;
+import com.pajamas.learning.enums.PlanStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

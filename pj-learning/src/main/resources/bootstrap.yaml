@@ -7,7 +7,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: learn-service
+    name: learning-service
   datasource:
     url: jdbc:mysql://192.168.150.120:3306/pj_learn?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -45,7 +45,7 @@ knife4j:
         group-name: default
         api-rule: package
         api-rule-resources:
-          - com.pajamas.learn.controller
+          - com.pajamas.learning.controller
 
 logging:
   level:

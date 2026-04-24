@@ -1,4 +1,4 @@
-package com.pajamas.learn.service.impl;
+package com.pajamas.learning.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,10 +10,10 @@ import com.pajamas.common.exception.BadRequestException;
 import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.UserContext;
-import com.pajamas.learn.domain.po.LearningLesson;
-import com.pajamas.learn.domain.vo.LearningLessonVO;
-import com.pajamas.learn.mapper.LearningLessonMapper;
-import com.pajamas.learn.service.ILearningLessonService;
+import com.pajamas.learning.domain.po.LearningLesson;
+import com.pajamas.learning.domain.vo.LearningLessonVO;
+import com.pajamas.learning.mapper.LearningLessonMapper;
+import com.pajamas.learning.service.ILearningLessonService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
