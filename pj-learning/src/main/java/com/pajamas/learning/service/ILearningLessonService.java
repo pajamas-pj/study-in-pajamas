@@ -5,6 +5,7 @@ import com.pajamas.common.domain.PageQuery;
 import com.pajamas.learning.domain.po.LearningLesson;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pajamas.learning.domain.vo.LearningLessonVO;
+import com.pajamas.learning.domain.vo.LearningPlanPageVO;
 
 import java.util.List;
 
@@ -27,4 +28,8 @@ public interface ILearningLessonService extends IService<LearningLesson> {
     LearningLessonVO queryNowLearningLesson();
 
     LearningLessonVO queryLessonByCourseId(Long courseId);
+
+    void createLearningPlans(Long courseId, Integer freq);
+
+    LearningPlanPageVO queryMyPlans(PageQuery query);
 }

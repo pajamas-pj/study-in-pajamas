@@ -1,10 +1,8 @@
 package com.pajamas.common.utils;
 
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
+import com.pajamas.common.constants.Constant;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -72,6 +70,21 @@ public class WebUtils {
         response.setHeader(key, value);
     }
 
+
+    public static String getRequestId() {
+        return getHeader(Constant.REQUEST_ID_HEADER);
+    }
+
+    public static boolean isGatewayRequest() {
+        String originName = getHeader(Constant.REQUEST_FROM_HEADER);
+        return Constant.GATEWAY_ORIGIN_NAME.equals(originName);
+    }
+
+    public static boolean isFeignRequest() {
+        String originName = getHeader(Constant.REQUEST_FROM_HEADER);
+        return Constant.FEIGN_ORIGIN_NAME.equals(originName);
+    }
+
     public static boolean isSuccess() {
         HttpServletResponse response = getResponse();
         return response != null && response.getStatus() < 300;
@@ -97,18 +110,18 @@ public class WebUtils {
      * @return
      */
     public  static <T> String getParameters(final Map<String, T> queries) {
-        StringBuilder buffer = new StringBuilder();
+        StringBuffer buffer = new StringBuffer();
         for (Map.Entry<String, T> entry : queries.entrySet()) {
             if(entry.getValue() instanceof String[]){
                 buffer.append(entry.getKey()).append(String.join(",", ((String[])entry.getValue())))
                     .append("&");
             }else if(entry.getValue() instanceof Collection){
                 buffer.append(entry.getKey()).append(
-                        CollUtil.join(((Collection<String>)entry.getValue()),",")
+                        CollUtils.join(((Collection<String>)entry.getValue()),",")
                 ).append("&");
             }
         }
-        return buffer.length() > 0 ? buffer.substring(0, buffer.length() - 1) : StrUtil.EMPTY;
+        return buffer.length() > 0 ? buffer.substring(0, buffer.length() - 1) : StringUtils.EMPTY;
     }
 
     /**
@@ -125,9 +138,9 @@ public class WebUtils {
         String uri = url;
         //uri中去掉 http:// 或者https
         if(uri.contains("http://") ){
-            uri = uri.replace("http://", StrUtil.EMPTY);
+            uri = uri.replace("http://", StringUtils.EMPTY);
         }else if(uri.contains("https://")){
-            uri = uri.replace("https://", StrUtil.EMPTY);
+            uri = uri.replace("https://", StringUtils.EMPTY);
         }
 
         int endIndex = uri.length(); //uri 在url中的最后一个字符的序号+1

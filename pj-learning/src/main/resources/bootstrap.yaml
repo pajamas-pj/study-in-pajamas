@@ -22,6 +22,8 @@ spring:
     listener:
       simple:
         prefetch: 1
+  redis:
+    
 
 mybatis-plus:
   configuration:

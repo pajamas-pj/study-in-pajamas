@@ -1,6 +1,5 @@
 package com.pajamas.common.utils;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -41,11 +40,11 @@ public class CookieBuilder {
             return;
         }
         Cookie cookie = new Cookie(name, URLEncoder.encode(value, charset));
-        if(StrUtil.isNotBlank(domain)) {
+        if(StringUtils.isNotBlank(domain)) {
             cookie.setDomain(domain);
         }else if (request != null) {
             String serverName = request.getServerName();
-            serverName = StrUtil.subAfter(serverName, ".", false);
+            serverName = StringUtils.subAfter(serverName, ".", false);
             cookie.setDomain("." + serverName);
         }
         cookie.setHttpOnly(httpOnly);

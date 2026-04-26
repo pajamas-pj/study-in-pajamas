@@ -3,12 +3,16 @@ package com.pajamas.learning.controller;
 
 import com.pajamas.common.domain.PageDTO;
 import com.pajamas.common.domain.PageQuery;
+import com.pajamas.learning.domain.dto.LearningPlanDTO;
 import com.pajamas.learning.domain.vo.LearningLessonVO;
+import com.pajamas.learning.domain.vo.LearningPlanPageVO;
 import com.pajamas.learning.service.ILearningLessonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -49,5 +53,17 @@ public class   LearningLessonController {
     @ApiOperation("删除用户课表中指定课程")
     public void deleteLessonByCourseId(@PathVariable("courseId") Long courseId){
         lessonService.deleteLessonByCourseId(courseId);
+    }
+
+    @PostMapping("/plans")
+    @ApiOperation("创建学习计划")
+    public void  createLearningPlans(@RequestBody  @Valid LearningPlanDTO planDTO){
+        lessonService.createLearningPlans(planDTO.getCourseId(),planDTO.getFreq());
+    }
+
+    @ApiOperation("查询我的学习计划")
+    @GetMapping("/plans")
+    public LearningPlanPageVO queryMyPlans(PageQuery query){
+        return lessonService.queryMyPlans(query);
     }
 }

@@ -1,28 +1,28 @@
 package com.pajamas.common.utils;
 
 public class UserContext {
-    private static final ThreadLocal<Long> tl = new ThreadLocal<>();
+    private static final ThreadLocal<Long> TL = new ThreadLocal<>();
 
     /**
-     * 保存当前登录用户信息到ThreadLocal
+     * 保存用户信息
      * @param userId 用户id
      */
-    public static void setUser(Long userId) {
-        tl.set(userId);
+    public static void setUser(Long userId){
+        TL.set(userId);
     }
 
     /**
-     * 获取当前登录用户信息
+     * 获取用户
      * @return 用户id
      */
-    public static Long getUser() {
-        return tl.get();
+    public static Long getUser(){
+        return TL.get();
     }
 
     /**
-     * 移除当前登录用户信息
+     * 移除用户信息
      */
     public static void removeUser(){
-        tl.remove();
+        TL.remove();
     }
 }

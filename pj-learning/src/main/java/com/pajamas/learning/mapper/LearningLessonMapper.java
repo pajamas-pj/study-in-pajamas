@@ -3,6 +3,7 @@ package com.pajamas.learning.mapper;
 import com.pajamas.learning.domain.po.LearningLesson;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -15,4 +16,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface LearningLessonMapper extends BaseMapper<LearningLesson> {
 
+    Integer queryTotalPlan(@Param("userId")Long userId);
 }
