@@ -1,7 +1,8 @@
 package com.pajamas.common.validate.annotations;
 
-import com.tianji.common.validate.EnumValidator;
-import com.tianji.common.validate.EnumValueValidator;
+
+import com.pajamas.common.validate.EnumValidator;
+import com.pajamas.common.validate.EnumValueValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

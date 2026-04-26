@@ -1,8 +1,8 @@
 package com.pajamas.common.validate;
 
-import com.tianji.common.enums.BaseEnum;
-import com.tianji.common.utils.ArrayUtils;
-import com.tianji.common.validate.annotations.EnumValid;
+import com.pajamas.common.enums.BaseEnum;
+import com.pajamas.common.utils.ArrayUtils;
+import com.pajamas.common.validate.annotations.EnumValid;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;
@@ -20,7 +20,7 @@ public class EnumValidator implements ConstraintValidator<EnumValid, BaseEnum> {
     @Override
     public void initialize(EnumValid enumValid) {
         this.enums = enumValid.enumeration();
-        log.info("payload>>{}",ArrayUtils.toString(enumValid.payload()));
+        log.info("payload>>{}", ArrayUtils.toString(enumValid.payload()));
     }
 
     @Override
