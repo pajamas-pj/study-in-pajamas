@@ -1,7 +1,8 @@
 package com.pajamas.api.dto.user;
 
-import com.tianji.common.constants.RegexConstants;
-import com.tianji.common.validate.annotations.EnumValid;
+
+import com.pajamas.common.constants.RegexConstants;
+import com.pajamas.common.validate.annotations.EnumValid;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
