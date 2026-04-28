@@ -1,0 +1,64 @@
+server:
+  port: 8089  #端口
+  tomcat:
+    uri-encoding: UTF-8   #服务编码
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: remark-service
+  datasource:
+    url: jdbc:mysql://192.168.150.120:3306/pj_remark?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234
+  rabbitmq:
+    host: 192.168.150.120
+    port: 5672
+    virtual-host: /hmall
+    username: hmall
+    password: 123
+    listener:
+      simple:
+        prefetch: 1
+  redis:
+    
+
+mybatis-plus:
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      update-strategy: not_null
+      id-type: assign_id
+
+knife4j:
+  enable: true
+  openapi:
+    title: 被窝学堂点赞接口文档
+    description: 被窝学堂点赞接口文档
+    email: pj995995995@163.com
+    concat: lipengjie
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.pajamas.remark.controller
+
+logging:
+  level:
+    com.pajamas: debug
+  pattern:
+    dateformat: HH:mm:ss:SSS
+  file:
+    path: "logs/${spring.application.name}"
+
+seata:
+  enabled: false
+feign:
+  okhttp:
+    enabled: true

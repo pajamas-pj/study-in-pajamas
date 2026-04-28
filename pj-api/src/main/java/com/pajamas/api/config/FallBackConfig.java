@@ -1,6 +1,7 @@
 package com.pajamas.api.config;
 
 import com.pajamas.api.client.learning.fallback.LearningClientFallback;
+import com.pajamas.api.client.remark.fallback.RemarkClientFallback;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,5 +11,9 @@ public class FallBackConfig {
     @Bean
     public LearningClientFallback learningClientFallback() {
         return new LearningClientFallback();
+    }
+    @Bean
+    public RemarkClientFallback remarkClientFallback() {
+        return new RemarkClientFallback();
     }
 }

@@ -17,6 +17,7 @@
         <module>pj-user</module>
         <module>pj-learning</module>
         <module>pj-api</module>
+        <module>pj-remark</module>
     </modules>
     <!-- 继承 Spring Boot 父工程 -->
     <parent>
