@@ -23,7 +23,9 @@ spring:
       simple:
         prefetch: 1
   redis:
-    
+    host: 192.168.150.120
+    port: 6379
+    password: 1234
 
 mybatis-plus:
   configuration:
@@ -62,3 +64,12 @@ seata:
 feign:
   okhttp:
     enabled: true
+pj:
+  xxl-job:
+    access-token: tianji
+    admin:
+      address: http://192.168.150.120:8880/xxl-job-admin
+    executor:
+      appname: learning-service
+      log-retention-days: 10
+      logPath: job/learning-service

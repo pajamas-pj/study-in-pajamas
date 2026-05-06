@@ -104,9 +104,16 @@
             <version>9.0.38</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
+        </dependency>
+        <!--xxl-job-->
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
