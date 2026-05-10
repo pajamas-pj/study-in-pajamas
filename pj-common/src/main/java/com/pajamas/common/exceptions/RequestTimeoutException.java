@@ -1,4 +1,4 @@
-package com.pajamas.common.constants.exceptions;
+package com.pajamas.common.exceptions;
 
 /**
  * 请求超时异常

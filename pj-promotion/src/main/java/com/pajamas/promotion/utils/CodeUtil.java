@@ -1,7 +1,8 @@
 package com.pajamas.promotion.utils;
 
-import com.tianji.common.constants.RegexConstants;
-import com.tianji.common.exceptions.BadRequestException;
+
+import com.pajamas.common.constants.RegexConstants;
+import com.pajamas.common.exceptions.BadRequestException;
 
 /**
  * <h1 style='font-weight:500'>1.兑换码算法说明：</h1>

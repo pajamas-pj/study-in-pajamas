@@ -1,4 +1,4 @@
-package com.pajamas.common.constants.exceptions;
+package com.pajamas.common.exceptions;
 
 /**
  * 数据库异常

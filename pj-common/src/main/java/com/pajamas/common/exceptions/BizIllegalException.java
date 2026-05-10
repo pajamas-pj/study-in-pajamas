@@ -1,4 +1,4 @@
-package com.pajamas.common.constants.exceptions;
+package com.pajamas.common.exceptions;
 
 /**
  * 业务不合法异常

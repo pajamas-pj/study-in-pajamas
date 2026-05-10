@@ -5,7 +5,7 @@ import com.pajamas.api.client.promotion.PromotionClient;
 import com.pajamas.api.dto.promotion.CouponDiscountDTO;
 import com.pajamas.api.dto.promotion.OrderCouponDTO;
 import com.pajamas.api.dto.promotion.OrderCourseDTO;
-import com.pajamas.common.constants.exceptions.BizIllegalException;
+import com.pajamas.common.exceptions.BizIllegalException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 

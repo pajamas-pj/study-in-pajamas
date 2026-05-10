@@ -1,8 +1,9 @@
 package com.pajamas.promotion.strategy.discount;
 
-import com.tianji.common.utils.NumberUtils;
-import com.tianji.common.utils.StringUtils;
-import com.tianji.promotion.domain.po.Coupon;
+
+import com.pajamas.common.utils.NumberUtils;
+import com.pajamas.common.utils.StringUtils;
+import com.pajamas.promotion.domain.po.Coupon;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
