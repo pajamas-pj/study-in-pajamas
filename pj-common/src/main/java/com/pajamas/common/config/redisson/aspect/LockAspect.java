@@ -3,7 +3,8 @@ package com.pajamas.common.config.redisson.aspect;
 
 
 import com.pajamas.common.config.redisson.annotations.Lock;
-import com.pajamas.common.exception.BizIllegalException;
+
+import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

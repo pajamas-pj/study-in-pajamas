@@ -2,8 +2,9 @@ package com.pajamas.promotion.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pajamas.common.domain.PageDTO;
-import com.pajamas.common.exception.BadRequestException;
-import com.pajamas.common.exception.BizIllegalException;
+
+import com.pajamas.common.exceptions.BadRequestException;
+import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.*;
 import com.pajamas.promotion.constants.PromotionConstants;
 import com.pajamas.promotion.domain.dto.CouponFormDTO;

@@ -4,8 +4,9 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.pajamas.common.config.mq.RabbitMqHelper;
 import com.pajamas.common.config.redisson.annotations.Lock;
 import com.pajamas.common.constants.MqConstants;
-import com.pajamas.common.exception.BadRequestException;
-import com.pajamas.common.exception.BizIllegalException;
+
+import com.pajamas.common.exceptions.BadRequestException;
+import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.NumberUtils;
 import com.pajamas.common.utils.UserContext;

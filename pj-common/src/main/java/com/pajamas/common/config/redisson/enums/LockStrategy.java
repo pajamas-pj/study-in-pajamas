@@ -2,7 +2,7 @@ package com.pajamas.common.config.redisson.enums;
 
 
 import com.pajamas.common.config.redisson.annotations.Lock;
-import com.pajamas.common.exception.BizIllegalException;
+import com.pajamas.common.exceptions.BizIllegalException;
 import org.redisson.api.RLock;
 
 public enum LockStrategy {

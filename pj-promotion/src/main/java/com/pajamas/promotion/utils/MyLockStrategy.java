@@ -1,7 +1,7 @@
 package com.pajamas.promotion.utils;
 
 
-import com.pajamas.common.exception.BizIllegalException;
+import com.pajamas.common.exceptions.BizIllegalException;
 import org.redisson.api.RLock;
 
 public enum MyLockStrategy {
