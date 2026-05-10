@@ -1,7 +1,9 @@
 package com.pajamas.promotion.service;
 
+import com.pajamas.promotion.domain.po.Coupon;
 import com.pajamas.promotion.domain.po.ExchangeCode;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * <p>
@@ -13,4 +15,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IExchangeCodeService extends IService<ExchangeCode> {
 
+    @Async("generateExchangeCodeExecutor")
+    void asyncGenerateCode(Coupon coupon);
+
+    boolean updateExchangeMark(long serialNum, boolean mark);
+
+    Long exchangeTargetId(long serialNum);
 }
