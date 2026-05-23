@@ -1,11 +1,11 @@
-package com.pajamas.user.utils;
+package com.pajamas.auth.utils;
 
 import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTValidator;
 import cn.hutool.jwt.signers.JWTSigner;
 import cn.hutool.jwt.signers.JWTSignerUtil;
-import com.pajamas.common.exception.UnauthorizedException;
+import com.pajamas.common.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
@@ -52,7 +52,7 @@ public class JwtTool {
         try {
             jwt = JWT.of(token).setSigner(jwtSigner);
         } catch (Exception e) {
-            throw new UnauthorizedException("无效的token", e);
+            throw new UnauthorizedException(401,"无效的token", e);
         }
         // 2.校验jwt是否有效
         if (!jwt.verify()) {

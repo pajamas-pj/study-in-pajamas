@@ -15,6 +15,14 @@ import java.util.List;
 public interface UserClient {
 
     /**
+     * 登录接口
+     * @param loginDTO 登录信息
+     * @return 用户详情
+     */
+    @PostMapping("/users/detail")
+    LoginUserDTO queryUserDetail(@RequestBody LoginFormDTO loginDTO);
+
+    /**
      * 根据手机号查询用户id
      * @param phone 手机号
      * @return 用户id

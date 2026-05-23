@@ -18,7 +18,7 @@ public class UserDTO {
     private Long id;
     @ApiModelProperty(value = "手机", example = "13890011009")
     @Pattern(regexp = RegexConstants.PHONE_PATTERN, message = "手机号格式错误")
-    private String cellPhone;
+    private String cellphone;
     @ApiModelProperty(value = "用户名称/昵称", example = "李四")
     private String name;
     @ApiModelProperty(value = "用户类型，1-其他员工,2-普通学员，3-老师", example = "2")

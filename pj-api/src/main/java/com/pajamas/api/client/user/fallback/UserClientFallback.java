@@ -18,6 +18,10 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
         log.error("查询用户服务出现异常", cause);
         return new UserClient() {
             @Override
+            public LoginUserDTO queryUserDetail(LoginFormDTO loginDTO) {
+                return null;
+            }
+            @Override
             public Long exchangeUserIdWithPhone(String phone) {
                 return null;
             }

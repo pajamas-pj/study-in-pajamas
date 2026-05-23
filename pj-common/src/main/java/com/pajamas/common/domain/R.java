@@ -1,7 +1,7 @@
 package com.pajamas.common.domain;
 
 
-import com.pajamas.common.exception.CommonException;
+import com.pajamas.common.exceptions.CommonException;
 import lombok.Data;
 
 

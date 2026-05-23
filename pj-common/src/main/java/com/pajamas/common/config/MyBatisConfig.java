@@ -22,7 +22,9 @@ public class MyBatisConfig {
         PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
         paginationInnerInterceptor.setMaxLimit(1000L);
         interceptor.addInnerInterceptor(paginationInnerInterceptor);
-        interceptor.addInnerInterceptor(dynamicTableNameInnerInterceptor);
+        if (dynamicTableNameInnerInterceptor != null) {
+            interceptor.addInnerInterceptor(dynamicTableNameInnerInterceptor);
+        }
         return interceptor;
     }
 }

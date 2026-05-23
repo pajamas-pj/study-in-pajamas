@@ -3,9 +3,11 @@ package com.pajamas.gateway.config;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import java.security.KeyPair;
 
@@ -29,5 +31,17 @@ public class SecurityConfig {
         return keyStoreKeyFactory.getKeyPair(
                 properties.getAlias(),
                 properties.getPassword().toCharArray());
+    }
+
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        http
+                .authorizeExchange()
+                .anyExchange().permitAll()  // 所有请求都放行
+                .and()
+                .csrf().disable()
+                .formLogin().disable()
+                .httpBasic().disable();
+        return http.build();
     }
 }

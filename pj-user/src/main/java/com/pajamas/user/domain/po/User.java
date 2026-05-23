@@ -30,7 +30,7 @@ public class User implements Serializable {
     /**
      * 用户ID
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -41,7 +41,7 @@ public class User implements Serializable {
     /**
      * 手机号
      */
-    private String phone;
+    private String cellphone;
 
     /**
      * 密码

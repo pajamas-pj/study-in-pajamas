@@ -1,9 +1,9 @@
 package com.pajamas.common.advice;
 
 import com.pajamas.common.domain.R;
-import com.pajamas.common.exception.BadRequestException;
-import com.pajamas.common.exception.CommonException;
-import com.pajamas.common.exception.DbException;
+import com.pajamas.common.exceptions.BadRequestException;
+import com.pajamas.common.exceptions.CommonException;
+import com.pajamas.common.exceptions.DbException;
 import com.pajamas.common.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +58,7 @@ public class CommonExceptionAdvice {
     @ExceptionHandler(Exception.class)
     public Object handleRuntimeException(Exception e) {
         log.error("其他异常 uri : {} -> ", WebUtils.getRequest().getRequestURI(), e);
-        return processResponse(new CommonException("服务器内部异常", 500));
+        return processResponse(new CommonException(500,"服务器内部异常"));
     }
 
     private ResponseEntity<R<Void>> processResponse(CommonException e){

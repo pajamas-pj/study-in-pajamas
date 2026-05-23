@@ -1,9 +1,10 @@
 package com.pajamas.user.service;
 
-import com.pajamas.user.domain.dto.LoginFormDTO;
+import com.pajamas.api.dto.user.LoginFormDTO;
+import com.pajamas.api.dto.user.LoginUserDTO;
+import com.pajamas.user.domain.dto.SignFormDTO;
 import com.pajamas.user.domain.po.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pajamas.user.domain.vo.UserLoginVO;
 
 /**
  * <p>
@@ -15,6 +16,7 @@ import com.pajamas.user.domain.vo.UserLoginVO;
  */
 public interface IUserService extends IService<User> {
 
-    UserLoginVO login(LoginFormDTO loginDTO);
+    LoginUserDTO queryUserDetail(LoginFormDTO loginDTO);
 
+    void sign(SignFormDTO signDTO);
 }

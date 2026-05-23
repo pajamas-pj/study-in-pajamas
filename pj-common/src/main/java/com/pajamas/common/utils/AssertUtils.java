@@ -2,7 +2,7 @@ package com.pajamas.common.utils;
 
 
 import com.pajamas.common.constants.ErrorInfo;
-import com.pajamas.common.exception.BadRequestException;
+import com.pajamas.common.exceptions.BadRequestException;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.pajamas.user.config;
+package com.pajamas.auth.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,5 +12,6 @@ public class JwtProperties {
     private Resource location;
     private String password;
     private String alias;
-    private Duration tokenTTL = Duration.ofMinutes(10);
+    private Duration accessTokenTTL = Duration.ofMinutes(30);
+    private Duration refreshTokenTTL = Duration.ofDays(7);
 }

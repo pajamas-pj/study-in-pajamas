@@ -13,16 +13,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
-  rabbitmq:
-    host: 192.168.150.120
-    port: 5672
-    virtual-host: /hamll
-    username: itheima
-    password: 123321
-    listener:
-      simple:
-        prefetch: 1
-
 mybatis-plus:
   configuration:
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
@@ -54,13 +44,6 @@ logging:
     dateformat: HH:mm:ss:SSS
   file:
     path: "logs/${spring.application.name}"
-
-pj:
-  jwt:
-    location: classpath:pj.jks
-    alias: pj
-    password: pj1234
-    tokenTTL: 30m
 
 seata:
   enabled: false

@@ -3,7 +3,7 @@ package com.pajamas.user.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.pajamas.common.exception.BadRequestException;
+import com.pajamas.common.exceptions.BadRequestException;
 import lombok.Getter;
 
 @Getter

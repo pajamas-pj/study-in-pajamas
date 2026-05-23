@@ -14,10 +14,12 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/users/**
-        - id: learn-service
-          uri: lb://learning-service
+        - id: auth-service
+          uri: lb://auth-service
           predicates:
-            - Path=/learning-lesson/**
+            - Path=/auth/**
+          filters:
+            - name: TokenRelay  # 这个过滤器是关键，负责传递 Bearer Token 和 Cookie
 
 logging:
   level:
@@ -33,6 +35,10 @@ pj:
     alias: pj
     password: pj1234
     tokenTTL: 30m
+    refreshTokenTTL: 4h
   auth:
     excludePaths:
-      - /users/login
+      - /users/sign
+      - /auth/login
+      - /auth/refresh
+      - /auth/logout

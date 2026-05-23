@@ -1,9 +1,10 @@
 package com.pajamas.gateway.filter;
 
-import com.pajamas.common.exception.UnauthorizedException;
+import com.pajamas.common.exceptions.UnauthorizedException;
 import com.pajamas.gateway.config.AuthProperties;
 import com.pajamas.gateway.utils.JwtTool;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MyGlobalFilter implements GlobalFilter, Ordered {
@@ -30,6 +32,7 @@ public class MyGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. 获取request
         ServerHttpRequest request = exchange.getRequest();
+        log.info("请求路径：{}", request.getPath());
         // 2. 判断是否需要做登录拦截
         if (isExclude(request.getPath().toString())) {
             // 放行
@@ -37,7 +40,7 @@ public class MyGlobalFilter implements GlobalFilter, Ordered {
         }
         // 3. 获取token
         String token = null;
-        List<String> headers = request.getHeaders().get("authorization");
+        List<String> headers = request.getHeaders().get("Authorization");
         if (headers != null && !headers.isEmpty()) {
             token = headers.get(0);
         }
@@ -51,7 +54,6 @@ public class MyGlobalFilter implements GlobalFilter, Ordered {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();//直接结束
         }
-
         // 5. 添加用户到请求头
         String userInfo = userId.toString();
         ServerWebExchange swe = exchange.mutate()

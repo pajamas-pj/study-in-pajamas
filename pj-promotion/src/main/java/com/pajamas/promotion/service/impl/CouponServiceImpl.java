@@ -62,7 +62,6 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
         Coupon coupon = BeanUtils.copyBean(dto, Coupon.class);
         // 1.2.保存
         save(coupon);
-
         if (!dto.getSpecific()) {
             // 没有范围限定
             return;

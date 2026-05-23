@@ -22,8 +22,4 @@ public class JsonConfig {
             jacksonObjectMapperBuilder.serializerByType(BigInteger.class, ToStringSerializer.instance);
         };
     }
-    @Bean
-    public MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
 }

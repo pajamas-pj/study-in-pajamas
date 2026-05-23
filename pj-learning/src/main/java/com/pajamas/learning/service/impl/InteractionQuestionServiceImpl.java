@@ -10,7 +10,7 @@ import com.pajamas.api.dto.course.CataSimpleInfoDTO;
 import com.pajamas.api.dto.course.CourseSimpleInfoDTO;
 import com.pajamas.api.dto.user.UserDTO;
 import com.pajamas.common.domain.PageDTO;
-import com.pajamas.common.exception.BadRequestException;
+import com.pajamas.common.exceptions.BadRequestException;
 import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.StringUtils;
