@@ -1,0 +1,29 @@
+package com.pajamas.course.domain.dto;
+
+import com.pajamas.course.constants.CourseErrorInfo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Data
+@ApiModel(description = "课程分类新增表单")
+public class CategorySaveDTO {
+    @ApiModelProperty(name = "父分类id, 如果是新增一级分类parentId传0", example = "0")
+    private Long parentId;
+
+    @ApiModelProperty(value = "名称",required = true, example = "IT·互联网")
+    @NotNull(message = CourseErrorInfo.Msg.CATEGORY_ADD_NAME_NOT_NULL)
+    @Size(max = 15, message = CourseErrorInfo.Msg.CATEGORY_ADD_NAME_SIZE)
+    private String name;
+
+    @ApiModelProperty(value = "分类优先级序号",required = true, example = "1")
+    @Max(value = 99, message = CourseErrorInfo.Msg.CATEGORY_ADD_INDEX_MAX_MIN)
+    @Min(value = 1, message = CourseErrorInfo.Msg.CATEGORY_ADD_INDEX_MAX_MIN)
+    @NotNull(message = CourseErrorInfo.Msg.CATEGORY_ADD_INDEX_NOT_NULL)
+    private Integer priority;
+    }

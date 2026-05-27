@@ -20,6 +20,7 @@
         <module>pj-remark</module>
         <module>pj-promotion</module>
         <module>pj-auth</module>
+        <module>pj-course</module>
     </modules>
     <!-- 继承 Spring Boot 父工程 -->
     <parent>

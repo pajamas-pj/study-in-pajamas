@@ -23,7 +23,7 @@ public class CategoryCache {
     public Map<Long, CategoryBasicDTO> getCategoryMap() {
         return categoryCaches.get("CATEGORY", key -> {
             // 1.从CategoryClient查询
-            List<CategoryBasicDTO> list = categoryClient.getAllOfOneLevel();
+            List<CategoryBasicDTO> list = categoryClient.getAll();
             if (list == null || list.isEmpty()) {
                 return CollUtils.emptyMap();
             }
