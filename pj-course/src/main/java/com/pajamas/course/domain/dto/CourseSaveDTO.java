@@ -12,41 +12,40 @@ import java.time.LocalDateTime;
 @Data
 @ApiModel(description = "课程基本信息实体")
 public class CourseSaveDTO {
-    @ApiModelProperty("课程id，新增不传")
+    @ApiModelProperty(value = "课程id，新增不传")
     private Long id;
-    @ApiModelProperty("课程名称")
+    @ApiModelProperty(value = "课程名称",example = "Java后端")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_NAME_NULL)
     private String name;
     @ApiModelProperty("封面链接url")
-    @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_COVER_URL_NULL)
     private String coverUrl;
-    @ApiModelProperty("三级课程分类id")
+    @ApiModelProperty(value = "三级课程分类id",example = "9")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_CATEGORY_NULL)
     private Long thirdCateId;
-    @ApiModelProperty("是否是免费")
+    @ApiModelProperty(value = "是否是免费",example = "true")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_FREE_NULL)
     private Boolean free;
-    @ApiModelProperty("课程价格")
+    @ApiModelProperty(value = "课程价格",example = "0")
     @Min(value = 0, message = CourseErrorInfo.Msg.COURSE_SAVE_PRICE_NEGATIVE)
     private Integer price;
-    @ApiModelProperty("购买周期开始时间")
+    @ApiModelProperty(value = "购买周期开始时间",example = "2026-03-25T09:09:09")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_PURCHASE_TIME_NULL)
     private LocalDateTime purchaseStartTime;
-    @ApiModelProperty("购买周期结束时间")
+    @ApiModelProperty(value = "购买周期结束时间",example = "2028-03-25T09:09:09")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_PURCHASE_TIME_NULL)
     private LocalDateTime purchaseEndTime;
-    @ApiModelProperty("课程有效期，不传表示没有期限，其他表示月数")
+    @ApiModelProperty(value = "课程有效期，不传表示没有期限，其他表示月数")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_DURATION_NULL)
     private Integer validDuration;
 
 
-    @ApiModelProperty("课程介绍")
+    @ApiModelProperty(value = "课程介绍",example = "Java后端课程介绍")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_INTRODUCE_NULL)
     private String introduce;
-    @ApiModelProperty("使用人群")
+    @ApiModelProperty(value = "使用人群",example = "Java后端课程使用人群")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_USE_PEOPLE_NULL)
     private String usePeople;
-    @ApiModelProperty("课程详情")
+    @ApiModelProperty(value = "课程详情",example = "Java后端课程详情")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_DETAIL_NULL)
     private String detail;
 }

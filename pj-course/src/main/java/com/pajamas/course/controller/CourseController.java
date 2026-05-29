@@ -37,32 +37,32 @@ public class CourseController {
     private final ICourseService courseService;
     private final ICourseCatalogueService courseCatalogueService;
 
-    @PostMapping("baseInfo/save")
+    @PostMapping("/baseInfo/save")
     @ApiOperation("保存课程基本信息")
     public CourseSaveVO save(@RequestBody CourseSaveDTO courseSaveDTO) {
         return courseService.save(courseSaveDTO);
     }
-    @GetMapping("baseInfo/{id}")
+    @GetMapping("/baseInfo/{id}")
     @ApiOperation("获取课程基础信息")
     @ApiImplicitParam(name = "id", value = "课程id")
     public CourseBaseInfoVO baseInfo(@PathVariable("id") Long id) {
         return courseService.getCourseBaseInfo(id);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     @ApiOperation("课程删除")
     @ApiImplicitParam(name = "id", value = "id")
     public void deleteById(@PathVariable("id") Long id) {
         courseService.deleteById(id);
     }
 
-    @PostMapping("upShelf/{id}")
+    @PostMapping("/upShelf/{id}")
     @ApiOperation("课程上架")
     public void upShelf(@PathVariable("id") Long id) {
         courseService.upShelf(id);
     }
 
-    @PostMapping("downShelf/{id}")
+    @PostMapping("/downShelf/{id}")
     @ApiOperation("课程下架")
     public void downShelf(@PathVariable("id") Long id) {
         courseService.downShelf(id);
@@ -83,6 +83,5 @@ public class CourseController {
     ){
         return courseService.getInfoById(id, withCatalogue, withTeachers);
     }
-
 
 }

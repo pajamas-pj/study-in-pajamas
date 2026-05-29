@@ -1,0 +1,28 @@
+DROP TABLE IF EXISTS `course_catalogue`;
+CREATE TABLE `course_catalogue` (
+                                    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '课程目录id',
+                                    `name` VARCHAR(30) NOT NULL COMMENT '目录名称',
+                                    `trailer` TINYINT DEFAULT 0 COMMENT '是否支持试看（0-否 1-是）',
+                                    `course_id` BIGINT NOT NULL COMMENT '课程id',
+                                    `type` TINYINT NOT NULL COMMENT '目录类型 1-章 2-节 3-测试',
+                                    `parent_catalogue_id` BIGINT NOT NULL DEFAULT 0 COMMENT '所属章id，章默认为0，小节和测试填写章id',
+                                    `media_id` BIGINT DEFAULT NULL COMMENT '媒资id',
+                                    `video_name` VARCHAR(50) DEFAULT NULL COMMENT '视频名称',
+                                    `living_start_time` DATETIME DEFAULT NULL COMMENT '直播开始时间',
+                                    `living_end_time` DATETIME DEFAULT NULL COMMENT '直播结束时间',
+                                    `play_back` TINYINT DEFAULT 0 COMMENT '是否支持回放（0-否 1-是）',
+                                    `media_duration` INT DEFAULT NULL COMMENT '视频时长（秒）',
+                                    `index` INT DEFAULT 0 COMMENT '用于章节排序',
+                                    `dep_id` BIGINT DEFAULT NULL COMMENT '部门id',
+                                    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                    `creator` BIGINT DEFAULT NULL COMMENT '创建人',
+                                    `updater` BIGINT DEFAULT NULL COMMENT '更新人',
+                                    `deleted` TINYINT NOT NULL DEFAULT 0 COMMENT '逻辑删除（0-未删除 1-已删除）',
+                                    PRIMARY KEY (`id`),
+                                    KEY `idx_course_id` (`course_id`),
+                                    KEY `idx_parent_catalogue_id` (`parent_catalogue_id`),
+                                    KEY `idx_type` (`type`),
+                                    KEY `idx_course_parent` (`course_id`, `parent_catalogue_id`),
+                                    KEY `idx_deleted` (`deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='课程目录表（章/节/测试）';

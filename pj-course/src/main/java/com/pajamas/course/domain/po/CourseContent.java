@@ -28,7 +28,7 @@ public class CourseContent implements Serializable {
     /**
      * 课程id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.INPUT)
     private Long id;
 
     /**

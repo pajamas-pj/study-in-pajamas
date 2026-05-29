@@ -1,6 +1,9 @@
 package com.pajamas.course.service;
 
 import com.pajamas.api.dto.course.CatalogueDTO;
+import com.pajamas.course.domain.dto.CatalogueMediaSaveDTO;
+import com.pajamas.course.domain.dto.CatalogueQuestionSaveDTO;
+import com.pajamas.course.domain.dto.CatalogueSaveDTO;
 import com.pajamas.course.domain.po.CourseCatalogue;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,4 +20,10 @@ import java.util.List;
 public interface ICourseCatalogueService extends IService<CourseCatalogue> {
 
     List<CatalogueDTO> queryCourseCatalogues(Long id, boolean b);
+
+    void saveCatalogue(Long courseId, List<CatalogueSaveDTO> chapters);
+
+    void saveMedia(Long courseId, List<CatalogueMediaSaveDTO> mediaList);
+
+    void saveQuestion(Long courseId, List<CatalogueQuestionSaveDTO> questionList);
 }

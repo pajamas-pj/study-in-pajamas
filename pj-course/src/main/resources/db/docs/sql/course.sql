@@ -1,0 +1,40 @@
+DROP TABLE IF EXISTS `course`;
+CREATE TABLE `course` (
+                          `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '课程id',
+                          `name` VARCHAR(30) DEFAULT NULL COMMENT '课程名称',
+                          `course_type` INT NOT NULL DEFAULT 2 COMMENT '课程类型，1：直播课，2：录播课',
+                          `cover_url` VARCHAR(255) DEFAULT NULL COMMENT '封面链接',
+                          `first_cate_id` BIGINT DEFAULT NULL COMMENT '一级课程分类id',
+                          `second_cate_id` BIGINT DEFAULT NULL COMMENT '二级课程分类id',
+                          `third_cate_id` BIGINT DEFAULT NULL COMMENT '三级课程分类id',
+                          `free` INT NOT NULL DEFAULT 1 COMMENT '售卖方式0：付费，1：免费',
+                          `price` INT NOT NULL DEFAULT 0 COMMENT '课程价格，单位为分',
+                          `template_type` INT NOT NULL DEFAULT 1 COMMENT '模板类型，1：自定义模板，2：自定模板板',
+                          `template_url` VARCHAR(255) DEFAULT NULL COMMENT '自定义模板的链接',
+                          `status` INT NOT NULL DEFAULT 1 COMMENT '课程状态，1：待上架，2：已上架，3：下架，4：已删除',
+                          `purchase_start_time` DATETIME DEFAULT NULL COMMENT '课程购买有效期开始时间',
+                          `purchase_end_time` DATETIME DEFAULT NULL COMMENT '课程购买有效期结束时间',
+                          `step` INT NOT NULL DEFAULT 0 COMMENT '信息填写进度',
+                          `score` DECIMAL(3,1) DEFAULT NULL COMMENT '课程评价得分，4.5代表4.5星',
+                          `media_duration` INT DEFAULT NULL COMMENT '课程总时长，单位分',
+                          `valid_duration` INT NOT NULL DEFAULT 0 COMMENT '课程有效期，单位月',
+                          `section_num` INT NOT NULL DEFAULT 0 COMMENT '课程总节数，包括练习',
+                          `dep_id` BIGINT DEFAULT NULL COMMENT '部门id',
+                          `publish_times` INT NOT NULL DEFAULT 0 COMMENT '发布次数',
+                          `publish_time` DATETIME DEFAULT NULL COMMENT '最后发布时间',
+                          `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                          `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                          `creator` BIGINT DEFAULT NULL COMMENT '创建人',
+                          `updater` BIGINT DEFAULT NULL COMMENT '更新人',
+                          `deleted` INT NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+                          PRIMARY KEY (`id`),
+                          KEY `idx_first_cate_id` (`first_cate_id`),
+                          KEY `idx_second_cate_id` (`second_cate_id`),
+                          KEY `idx_third_cate_id` (`third_cate_id`),
+                          KEY `idx_status` (`status`),
+                          KEY `idx_dep_id` (`dep_id`),
+                          KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
+
+
+

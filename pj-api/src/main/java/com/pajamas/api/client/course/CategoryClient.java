@@ -10,8 +10,8 @@ import java.util.List;
 public interface CategoryClient {
 
     /**
-     * 获取所有课程及课程分类
-     * @return  所有课程及课程分类
+     * 获取所有课程分类
+     * @return  所有课程分类
      */
     @GetMapping("/getAll")
     List<CategoryBasicDTO> getAll();

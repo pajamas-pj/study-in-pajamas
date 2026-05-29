@@ -21,6 +21,7 @@
         <module>pj-promotion</module>
         <module>pj-auth</module>
         <module>pj-course</module>
+        <module>pj-exam</module>
     </modules>
     <!-- 继承 Spring Boot 父工程 -->
     <parent>

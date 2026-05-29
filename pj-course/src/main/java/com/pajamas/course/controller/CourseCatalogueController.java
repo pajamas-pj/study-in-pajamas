@@ -1,42 +1,45 @@
 package com.pajamas.course.controller;
 
-
+import com.pajamas.course.domain.dto.CatalogueMediaSaveDTO;
+import com.pajamas.course.domain.dto.CatalogueQuestionSaveDTO;
+import com.pajamas.course.domain.dto.CatalogueSaveDTO;
 import com.pajamas.course.service.ICourseCatalogueService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * <p>
- * 课程目录表（章/节/测试） 前端控制器
- * </p>
- *
- * @author lipengjie
- * @since 2026-05-25
- */
 @Slf4j
 @RestController
+@Api(tags = "课程目录相关接口")
 @RequiredArgsConstructor
 @RequestMapping("/catalogues")
 public class CourseCatalogueController {
 
     private final ICourseCatalogueService courseCatalogueService;
 
-    @ApiOperation("根据课程id查询章节集合")
-    @GetMapping("/category/list/{id}")
-    @ApiImplicitParam(name = "id", value = "课程id")
-    public List<CataSimpleInfoVO> catasIndexList(@PathVariable("id") Long id) {
-        return courseCatalogueService.getCatasIndexList(id);
+    @ApiOperation("保存课程目录")
+    @PostMapping("/save")
+    public void saveCatalogue(@RequestParam Long courseId,
+                              @RequestBody List<CatalogueSaveDTO> chapters) {
+        courseCatalogueService.saveCatalogue(courseId, chapters);
     }
 
+    @ApiOperation("保存课程目录媒资")
+    @PostMapping("/save/media")
+    public void saveMedia(@RequestParam Long courseId,
+                          @RequestBody List<CatalogueMediaSaveDTO> mediaList) {
+        courseCatalogueService.saveMedia(courseId, mediaList);
+    }
+
+    @ApiOperation("保存课程目录题目")
+    @PostMapping("/save/question")
+    public void saveQuestion(@RequestParam Long courseId,
+                             @RequestBody List<CatalogueQuestionSaveDTO> questionList) {
+        courseCatalogueService.saveQuestion(courseId, questionList);
+    }
 
 }
