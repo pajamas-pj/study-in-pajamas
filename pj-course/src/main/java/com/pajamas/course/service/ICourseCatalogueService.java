@@ -1,6 +1,7 @@
 package com.pajamas.course.service;
 
 import com.pajamas.api.dto.course.CatalogueDTO;
+import com.pajamas.api.dto.exam.ExamQuestionDTO;
 import com.pajamas.course.domain.dto.CatalogueMediaSaveDTO;
 import com.pajamas.course.domain.dto.CatalogueQuestionSaveDTO;
 import com.pajamas.course.domain.dto.CatalogueSaveDTO;
@@ -26,4 +27,6 @@ public interface ICourseCatalogueService extends IService<CourseCatalogue> {
     void saveMedia(Long courseId, List<CatalogueMediaSaveDTO> mediaList);
 
     void saveQuestion(Long courseId, List<CatalogueQuestionSaveDTO> questionList);
+
+    List<ExamQuestionDTO> queryQuestionsByCatalogueId(Long catalogueId);
 }

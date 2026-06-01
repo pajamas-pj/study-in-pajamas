@@ -1,6 +1,8 @@
 package com.pajamas.course.service.impl;
 
+import com.pajamas.api.client.exam.QuestionClient;
 import com.pajamas.api.dto.course.CatalogueDTO;
+import com.pajamas.api.dto.exam.ExamQuestionDTO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.course.constants.CourseConstants;
@@ -32,6 +34,7 @@ public class CourseCatalogueServiceImpl extends ServiceImpl<CourseCatalogueMappe
     private final RedisIdWorker redisIdWorker;
     private final CourseMapper courseMapper;
     private final ICatalogueQuestionService catalogueQuestionService;
+    private final QuestionClient questionClient;
 
     @Override
     public List<CatalogueDTO> queryCourseCatalogues(Long id, boolean b) {
@@ -113,6 +116,22 @@ public class CourseCatalogueServiceImpl extends ServiceImpl<CourseCatalogueMappe
         }
         //3. 批量入库
         catalogueQuestionService.saveBatch(toSave);
+    }
+
+    @Override
+    public List<ExamQuestionDTO> queryQuestionsByCatalogueId(Long catalogueId) {
+        //1. 查询该目录下的题目ID集合
+        List<CatalogueQuestion> relations = catalogueQuestionService.lambdaQuery()
+                .eq(CatalogueQuestion::getCatalogueId, catalogueId)
+                .list();
+        if (CollUtils.isEmpty(relations)) {
+            return Collections.emptyList();
+        }
+        List<Long> questionIds = relations.stream()
+                .map(CatalogueQuestion::getQuestionId)
+                .collect(Collectors.toList());
+        //2. 调用考试模块Feign批量查询题目详情
+        return questionClient.queryQuestionsByIds(questionIds);
     }
 
     @Override
