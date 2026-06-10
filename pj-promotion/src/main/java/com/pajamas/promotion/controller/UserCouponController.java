@@ -2,6 +2,7 @@ package com.pajamas.promotion.controller;
 
 
 import com.pajamas.api.dto.promotion.CouponDiscountDTO;
+import com.pajamas.api.dto.promotion.OrderCouponDTO;
 import com.pajamas.api.dto.promotion.OrderCourseDTO;
 import com.pajamas.promotion.service.IDiscountService;
 import com.pajamas.promotion.service.IUserCouponService;
@@ -23,7 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user-coupons")
-@Api(tags = "优惠券相关接口")
+@Api(tags = "用户券相关接口")
 public class UserCouponController {
 
     private final IUserCouponService userCouponService;
@@ -47,5 +48,9 @@ public class UserCouponController {
     public List<CouponDiscountDTO> findDiscountSolution(@RequestBody List<OrderCourseDTO> orderCourses){
         return discountService.findDiscountSolution(orderCourses);
     }
-
+    @ApiOperation("根据券方案计算订单优惠明细")
+    @PostMapping("/discount")
+    public CouponDiscountDTO queryDiscountDetailByOrder(@RequestBody OrderCouponDTO orderCouponDTO){
+        return discountService.queryDiscountDetailByOrder(orderCouponDTO);
+    }
 }

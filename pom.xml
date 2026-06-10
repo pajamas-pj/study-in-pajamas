@@ -22,6 +22,8 @@
         <module>pj-auth</module>
         <module>pj-course</module>
         <module>pj-exam</module>
+        <module>pj-trade</module>
+        <module>pj-stock</module>
     </modules>
     <!-- 继承 Spring Boot 父工程 -->
     <parent>
@@ -44,6 +46,7 @@
         <elasticsearch.version>7.12.1</elasticsearch.version>
         <xxl-job-version>2.3.1</xxl-job-version>
         <redisson.version>3.13.6</redisson.version>
+        <cola.version>4.3.2</cola.version>
     </properties>
 
     <!-- 对依赖包进行管理 -->
@@ -93,6 +96,12 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
                 <version>${redisson.version}</version>
+            </dependency>
+            <!--cola-->
+            <dependency>
+                <groupId>com.alibaba.cola</groupId>
+                <artifactId>cola-component-statemachine</artifactId>
+                <version>${cola.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

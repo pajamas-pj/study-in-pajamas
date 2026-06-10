@@ -93,6 +93,23 @@ public class DiscountServiceImpl implements IDiscountService {
         return findBestSolution(list);
     }
 
+    @Override
+    public CouponDiscountDTO queryDiscountDetailByOrder(OrderCouponDTO orderCouponDTO) {
+        // 1.根据用户券查询优惠券
+        List<Long> userCouponIds = orderCouponDTO.getUserCouponIds();
+        List<Coupon> coupons = userCouponMapper.queryCouponByUserCouponIds(userCouponIds, UserCouponStatus.LOCKED);
+        if (CollUtils.isEmpty(coupons)) {
+            return null;
+        }
+        // 2.查询优惠券对应课程
+        Map<Coupon, List<OrderCourseDTO>> availableCouponMap = findAvailableCoupon(coupons, orderCouponDTO.getCourseList());
+        if (CollUtils.isEmpty(availableCouponMap)) {
+            return null;
+        }
+        // 3.查询优惠券规则
+        return calculateSolutionDiscount(availableCouponMap, orderCouponDTO.getCourseList(), coupons);
+    }
+
 
     private List<CouponDiscountDTO> findBestSolution(List<CouponDiscountDTO> list) {
         // 1.准备Map记录最优解

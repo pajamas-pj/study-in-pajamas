@@ -56,17 +56,26 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         CategoryIdsDTO category = categoryService.getCategoryIdsByThirdId(courseSaveDTO.getThirdCateId());
         //2.数据转换
         //2.1生成课程id
-        long courseId = IdWorker.nextId("course");
+        long courseId = courseSaveDTO.getId() == null ? IdWorker.nextId("course") : courseSaveDTO.getId();
         //2.2转换课程信息
         Course course = BeanUtils.copyBean(courseSaveDTO, Course.class);
-        course.setId(courseId);
+        if(courseSaveDTO.getId() != null){
+            course.setId(courseId);
+        }
         course.setFirstCateId(category.getFirstCateId());
         course.setSecondCateId(category.getSecondCateId());
         course.setThirdCateId(category.getThirdCateId());
         course.setStatus(CourseStatus.WAITING);
         //2.3转换课程内容
         CourseContent courseContent = BeanUtils.copyBean(courseSaveDTO, CourseContent.class);
-        courseContent.setId(courseId);
+        if(courseSaveDTO.getId() != null){
+            courseContent.setId(courseId);
+        }
+        if(courseSaveDTO.getId() != null){
+            updateById(course);
+            courseContentService.updateById(courseContent);
+            return new CourseSaveVO(courseId);
+        }
         //3.保存数据
         //3.1保存课程表
         save(course);

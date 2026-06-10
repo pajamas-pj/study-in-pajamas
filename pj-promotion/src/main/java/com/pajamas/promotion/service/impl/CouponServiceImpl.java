@@ -53,13 +53,15 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
     private final ICouponScopeService scopeService;
     private final IExchangeCodeService codeService;
     private final IUserCouponService userCouponService;
-    private StringRedisTemplate redisTemplate;
+    private final StringRedisTemplate redisTemplate;
     @Override
     @Transactional
     public void saveCoupon(CouponFormDTO dto) {
         // 1.保存优惠券
         // 1.1.转PO
         Coupon coupon = BeanUtils.copyBean(dto, Coupon.class);
+        coupon.setCreater(1L);
+        coupon.setUpdater(1L);
         // 1.2.保存
         save(coupon);
         if (!dto.getSpecific()) {
@@ -109,7 +111,7 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
             throw new BadRequestException("优惠券不存在！");
         }
         // 2.判断优惠券状态，是否是暂停或待发放
-        if(coupon.getStatus() != CouponStatus.DRAFT && coupon.getStatus() != CouponStatus.PAUSE  ){
+        if(coupon.getStatus() != CouponStatus.DRAFT && coupon.getStatus() != CouponStatus.PAUSE){
             throw new BizIllegalException("优惠券状态错误！");
         }
         // 3.判断是否是立刻发放
@@ -135,11 +137,6 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
             cacheCouponInfo(coupon);
         }
         // 6.判断是否需要生成兑换码，优惠券类型必须是兑换码，优惠券状态必须是待发放
-        if(coupon.getObtainWay() == ObtainType.ISSUE && coupon.getStatus() == CouponStatus.DRAFT){
-            coupon.setIssueEndTime(c.getIssueEndTime());
-            codeService.asyncGenerateCode(coupon);
-        }
-        // 5.判断是否需要生成兑换码，优惠券类型必须是兑换码，优惠券状态必须是待发放
         if(coupon.getObtainWay() == ObtainType.ISSUE && coupon.getStatus() == CouponStatus.DRAFT){
             coupon.setIssueEndTime(c.getIssueEndTime());
             codeService.asyncGenerateCode(coupon);

@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "promotion-service", fallbackFactory = PromotionClientFallback.class)
+@FeignClient(name = "promotion-service", contextId = "promotion", fallbackFactory = PromotionClientFallback.class)
 public interface PromotionClient {
 
+    @ApiOperation("查询我的优惠券可用方案")
     @PostMapping("/user-coupons/available")
     List<CouponDiscountDTO> findDiscountSolution(@RequestBody List<OrderCourseDTO> orderCourses);
 

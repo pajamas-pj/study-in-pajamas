@@ -13,6 +13,7 @@ public enum UserCouponStatus implements BaseEnum {
     UNUSED(1, "未使用"),
     USED(2, "已使用"),
     EXPIRED(3, "已过期"),
+    LOCKED(4, "已锁定"),
     ;
     @EnumValue
     @JsonValue

@@ -8,6 +8,7 @@ import com.pajamas.common.constants.MqConstants;
 import com.pajamas.common.exceptions.BadRequestException;
 import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.BeanUtils;
+import com.pajamas.common.utils.DateUtils;
 import com.pajamas.common.utils.NumberUtils;
 import com.pajamas.common.utils.UserContext;
 import com.pajamas.promotion.constants.PromotionConstants;
@@ -90,7 +91,19 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
             return null;
         }
         // 3.数据反序列化
-        return BeanUtils.mapToBean(objMap, Coupon.class, false, CopyOptions.create());
+        Coupon coupon = new Coupon();
+        coupon.setId(couponId);
+        coupon.setTotalNum(Integer.valueOf((String) objMap.get("totalNum")));
+        coupon.setUserLimit(Integer.valueOf((String) objMap.get("userLimit")));
+        String beginTime = (String) objMap.get("issueBeginTime");
+        if (beginTime != null) {
+            coupon.setIssueBeginTime(DateUtils.of(Long.parseLong(beginTime)));
+        }
+        String endTime = (String) objMap.get("issueEndTime");
+        if (endTime != null) {
+            coupon.setIssueEndTime(DateUtils.of(Long.parseLong(endTime)));
+        }
+        return coupon;
     }
 
     @Transactional

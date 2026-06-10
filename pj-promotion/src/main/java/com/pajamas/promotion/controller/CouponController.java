@@ -44,7 +44,7 @@ public class CouponController {
     }
 
     @ApiOperation("发放优惠券接口")
-    @PutMapping("/{id}/issue")
+    @PutMapping("/issue")
     public void beginIssue(@RequestBody @Valid CouponIssueFormDTO dto) {
         couponService.beginIssue(dto);
     }
