@@ -95,7 +95,7 @@ public class CouponTccLogServiceImpl extends ServiceImpl<CouponTccLogMapper, Cou
             boolean updated = userCouponService.lambdaUpdate()
                     .set(UserCoupon::getStatus, target)
                     .eq(UserCoupon::getId, userCouponId)
-                    .eq(UserCoupon::getStatus, userCoupon.getStatus())
+                    .eq(UserCoupon::getStatus, UserCouponStatus.UNUSED)
                     .update();
             if (!updated) {
                 //更新失败
@@ -168,7 +168,7 @@ public class CouponTccLogServiceImpl extends ServiceImpl<CouponTccLogMapper, Cou
             boolean updated = userCouponService.lambdaUpdate()
                     .set(UserCoupon::getStatus, target)
                     .eq(UserCoupon::getId, item.getCouponId())
-                    .eq(UserCoupon::getStatus, userCoupon.getStatus())
+                    .eq(UserCoupon::getStatus, UserCouponStatus.LOCKED)
                     .update();
             if (!updated) {
                 throw new DbException("Confirm 更新用户券失败, userCouponId=" + item.getCouponId());
@@ -252,7 +252,7 @@ public class CouponTccLogServiceImpl extends ServiceImpl<CouponTccLogMapper, Cou
             boolean updated = userCouponService.lambdaUpdate()
                     .set(UserCoupon::getStatus, target)
                     .eq(UserCoupon::getId, item.getCouponId())
-                    .eq(UserCoupon::getStatus, userCoupon.getStatus())
+                    .eq(UserCoupon::getStatus, UserCouponStatus.LOCKED)
                     .update();
             if (!updated) {
                 throw new DbException("Cancel 释放优惠券失败, userCouponId=" + item.getCouponId());

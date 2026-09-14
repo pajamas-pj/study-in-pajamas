@@ -24,6 +24,7 @@
         <module>pj-exam</module>
         <module>pj-trade</module>
         <module>pj-stock</module>
+        <module>pj-pay</module>
     </modules>
     <!-- 继承 Spring Boot 父工程 -->
     <parent>
@@ -47,6 +48,7 @@
         <xxl-job-version>2.3.1</xxl-job-version>
         <redisson.version>3.13.6</redisson.version>
         <cola.version>4.3.2</cola.version>
+        <wechatpay.version>0.4.8</wechatpay.version>
     </properties>
 
     <!-- 对依赖包进行管理 -->
@@ -97,11 +99,17 @@
                 <artifactId>redisson</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
-            <!--cola-->
+            <!--cola状态机-->
             <dependency>
                 <groupId>com.alibaba.cola</groupId>
                 <artifactId>cola-component-statemachine</artifactId>
                 <version>${cola.version}</version>
+            </dependency>
+            <!--微信pay-->
+            <dependency>
+                <groupId>com.github.wechatpay-apiv3</groupId>
+                <artifactId>wechatpay-apache-httpclient</artifactId>
+                <version>${wechatpay.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

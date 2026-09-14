@@ -1,46 +1,54 @@
 package com.pajamas.common.domain;
 
 
-import com.pajamas.common.exceptions.CommonException;
+import com.pajamas.common.constants.Constant;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.slf4j.MDC;
+
+import static com.pajamas.common.constants.ErrorInfo.Code.FAILED;
+import static com.pajamas.common.constants.ErrorInfo.Code.SUCCESS;
+import static com.pajamas.common.constants.ErrorInfo.Msg.OK;
 
 
 @Data
+@ApiModel(description = "通用响应结果")
 public class R<T> {
+    @ApiModelProperty(value = "业务状态码，200-成功，其它-失败")
     private int code;
+    @ApiModelProperty(value = "响应消息", example = "OK")
     private String msg;
+    @ApiModelProperty(value = "响应数据")
     private T data;
+    @ApiModelProperty(value = "请求id", example = "1af123c11412e")
+    private String requestId;
 
     public static R<Void> ok() {
-        return ok(null);
+        return new R<>(SUCCESS, OK, null);
     }
 
     public static <T> R<T> ok(T data) {
-        return new R<>(200, "OK", data);
+        return new R<>(SUCCESS, OK, data);
     }
 
     public static <T> R<T> error(String msg) {
-        return new R<>(500, msg, null);
+        return new R<>(FAILED, msg, null);
     }
 
     public static <T> R<T> error(int code, String msg) {
         return new R<>(code, msg, null);
     }
 
-    public static <T> R<T> error(CommonException e) {
-        return new R<>(e.getCode(), e.getMessage(), null);
-    }
-
-    public R() {
-    }
-
     public R(int code, String msg, T data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
+        this.requestId = MDC.get(Constant.REQUEST_ID_HEADER);
     }
 
-    public boolean success(){
-        return code == 200;
+    public R<T> requestId(String requestId) {
+        this.requestId = requestId;
+        return this;
     }
 }

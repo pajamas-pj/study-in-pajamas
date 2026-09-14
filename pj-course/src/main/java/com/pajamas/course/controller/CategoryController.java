@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Api(tags = "课程分类相关接口")
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/courses/categories")
 @RequiredArgsConstructor
 public class CategoryController {
     private final ICategoryService categoryService;
@@ -61,6 +61,4 @@ public class CategoryController {
     public List<CategoryBasicDTO> allOfOneLevel() {
         return categoryService.getAll();
     }
-
-
 }
