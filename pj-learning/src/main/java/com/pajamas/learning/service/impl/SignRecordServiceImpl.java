@@ -3,7 +3,7 @@ package com.pajamas.learning.service.impl;
 
 import com.pajamas.common.config.mq.RabbitMqHelper;
 import com.pajamas.common.constants.MqConstants;
-import com.pajamas.common.exception.BizIllegalException;
+import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.BooleanUtils;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.DateUtils;

@@ -149,7 +149,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         }
         //3.封装数据并返回
         CategoryIdsDTO ids = new CategoryIdsDTO();
-        ids.setFirstCateId(secondCategory.getId());
+        ids.setFirstCateId(firstCategory.getId());
         ids.setSecondCateId(secondCategory.getId());
         ids.setThirdCateId(category.getId());
         return ids;

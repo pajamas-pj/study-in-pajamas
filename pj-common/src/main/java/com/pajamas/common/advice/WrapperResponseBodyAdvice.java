@@ -3,6 +3,7 @@ package com.pajamas.common.advice;
 
 import com.pajamas.common.constants.Constant;
 import com.pajamas.common.domain.R;
+import com.pajamas.common.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.MethodParameter;
@@ -30,12 +31,13 @@ public class WrapperResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (request.getURI().getPath().equals("/v2/api-docs")){
             return body;
         }
+        //MDC暂未完成
         if (body == null) {
             return R.ok().requestId(MDC.get(Constant.REQUEST_ID_HEADER));
         }
         if(body instanceof R){
             return body;
         }
-        return R.ok(body).requestId(MDC.get(Constant.REQUEST_ID_HEADER));
+        return R.ok(body);
     }
 }

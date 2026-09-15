@@ -1,10 +1,11 @@
 package com.pajamas.course.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import cn.hutool.core.util.StrUtil;
 import com.pajamas.api.dto.course.CourseFullInfoDTO;
 import com.pajamas.api.dto.course.CourseSimpleInfoDTO;
+import com.pajamas.common.domain.PageDTO;
 import com.pajamas.common.exceptions.BadRequestException;
 import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.CollUtils;
@@ -14,7 +15,9 @@ import com.pajamas.course.domain.dto.CourseSaveDTO;
 import com.pajamas.course.domain.dto.CourseSimpleInfoListDTO;
 import com.pajamas.course.domain.po.Course;
 import com.pajamas.course.domain.po.CourseContent;
+import com.pajamas.course.domain.query.CoursePageQuery;
 import com.pajamas.course.domain.vo.CourseBaseInfoVO;
+import com.pajamas.course.domain.vo.CourseItemPageVO;
 import com.pajamas.course.domain.vo.CourseSaveVO;
 import com.pajamas.course.enums.CourseStatus;
 import com.pajamas.course.mapper.CourseMapper;
@@ -28,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,18 +63,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         long courseId = courseSaveDTO.getId() == null ? IdWorker.nextId("course") : courseSaveDTO.getId();
         //2.2转换课程信息
         Course course = BeanUtils.copyBean(courseSaveDTO, Course.class);
-        if(courseSaveDTO.getId() != null){
-            course.setId(courseId);
-        }
+        course.setId(courseId);
         course.setFirstCateId(category.getFirstCateId());
         course.setSecondCateId(category.getSecondCateId());
         course.setThirdCateId(category.getThirdCateId());
         course.setStatus(CourseStatus.WAITING);
         //2.3转换课程内容
         CourseContent courseContent = BeanUtils.copyBean(courseSaveDTO, CourseContent.class);
-        if(courseSaveDTO.getId() != null){
-            courseContent.setId(courseId);
-        }
+        courseContent.setId(courseId);
         if(courseSaveDTO.getId() != null){
             updateById(course);
             courseContentService.updateById(courseContent);
@@ -154,5 +154,42 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 //            courseFullInfoDTO.setTeacherIds(courseTeacherService.getTeacherIdOfCourse(id));
 //        }
         return courseFullInfoDTO;
+    }
+
+    @Override
+    public PageDTO<CourseItemPageVO> getCourses(CoursePageQuery coursePageQuery) {
+        // 1. 提取查询条件，避免重复调用 getter
+        Long firstCateId = coursePageQuery.getFirstCateId();
+        Long secondCateId = coursePageQuery.getSecondCateId();
+        Long thirdCateId = coursePageQuery.getThirdCateId();
+        Boolean free = coursePageQuery.getFree();
+        Integer courseType = coursePageQuery.getCourseType();
+        String keyword = coursePageQuery.getKeyword();
+        Integer status = coursePageQuery.getStatus();
+        // 2. 分页查询课程，默认已上架
+        Page<Course> page = lambdaQuery()
+                .eq(firstCateId != null, Course::getFirstCateId, firstCateId)
+                .eq(secondCateId != null, Course::getSecondCateId, secondCateId)
+                .eq(thirdCateId != null, Course::getThirdCateId, thirdCateId)
+                .eq(free != null, Course::getFree, free)
+                .eq(courseType != null, Course::getCourseType, courseType)
+                .eq(status != null,Course::getStatus,status)
+                .like(StrUtil.isNotEmpty(keyword), Course::getName, keyword)
+                .page(coursePageQuery.toMpPage("update_time", false));
+
+        List<Course> records = page.getRecords();
+        if (CollUtils.isEmpty(records)) {
+            return PageDTO.empty(page);
+        }
+        //3.封装VO
+        List<CourseItemPageVO> list = new ArrayList<>(records.size());
+        for (Course r : records) {
+            CourseItemPageVO vo = BeanUtils.copyBean(r, CourseItemPageVO.class);
+            vo.setPrice(r.getPrice() != null ? r.getPrice().longValue() : null);
+            vo.setStatus(r.getStatus() != null ? r.getStatus().getValue() : null);
+            vo.setSections(r.getSectionNum());
+            list.add(vo);
+        }
+        return PageDTO.of(page, list);
     }
 }

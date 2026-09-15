@@ -3,16 +3,17 @@ package com.pajamas.course.controller;
 
 import com.pajamas.api.dto.course.CourseFullInfoDTO;
 import com.pajamas.api.dto.course.CourseSimpleInfoDTO;
-import com.pajamas.common.validate.annotations.ParamChecker;
+import com.pajamas.common.domain.PageDTO;
 import com.pajamas.course.domain.dto.CourseSaveDTO;
 import com.pajamas.course.domain.dto.CourseSimpleInfoListDTO;
+import com.pajamas.course.domain.query.CoursePageQuery;
 import com.pajamas.course.domain.vo.CourseBaseInfoVO;
+import com.pajamas.course.domain.vo.CourseItemPageVO;
 import com.pajamas.course.domain.vo.CourseSaveVO;
 import com.pajamas.course.service.ICourseCatalogueService;
 import com.pajamas.course.service.ICourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -84,4 +85,9 @@ public class CourseController {
         return courseService.getInfoById(id, withCatalogue, withTeachers);
     }
 
+    @ApiOperation("分页查询课程商品")
+    @GetMapping("/page")
+    public PageDTO<CourseItemPageVO> getCourses(@Validated CoursePageQuery coursePageQuery) {
+        return courseService.getCourses(coursePageQuery);
+    }
 }
