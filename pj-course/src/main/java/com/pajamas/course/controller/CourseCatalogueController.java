@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @Api(tags = "课程目录相关接口")
 @RequiredArgsConstructor
-@RequestMapping("/catalogues")
+@RequestMapping("/courses/catalogues")
 public class CourseCatalogueController {
 
     private final ICourseCatalogueService courseCatalogueService;

@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class WrapperResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
-        return returnType.getParameterType() != R.class ;//&& WebUtils.isGatewayRequest();
+        return returnType.getParameterType() != R.class && WebUtils.isGatewayRequest();
     }
 
     @Override
@@ -31,13 +31,12 @@ public class WrapperResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (request.getURI().getPath().equals("/v2/api-docs")){
             return body;
         }
-        //MDC暂未完成
         if (body == null) {
             return R.ok().requestId(MDC.get(Constant.REQUEST_ID_HEADER));
         }
         if(body instanceof R){
             return body;
         }
-        return R.ok(body);
+        return R.ok(body).requestId(MDC.get(Constant.REQUEST_ID_HEADER));
     }
 }

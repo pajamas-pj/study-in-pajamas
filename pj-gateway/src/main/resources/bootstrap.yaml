@@ -20,7 +20,14 @@ spring:
             - Path=/auth/**
           filters:
             - name: TokenRelay  # 这个过滤器是关键，负责传递 Bearer Token 和 Cookie
-
+        - id: course-service
+          uri: lb://course-service
+          predicates:
+            - Path=/courses/**
+        - id: exam-service
+          uri: lb://exam-service
+          predicates:
+            - Path=/exam/**
 logging:
   level:
     com.pajamas: debug
@@ -39,6 +46,6 @@ pj:
   auth:
     excludePaths:
       - /users/sign
-      - /auth/login
-      - /auth/refresh
-      - /auth/logout
+      - /auth/login/**
+      - /auth/refresh/**
+      - /auth/logout/**

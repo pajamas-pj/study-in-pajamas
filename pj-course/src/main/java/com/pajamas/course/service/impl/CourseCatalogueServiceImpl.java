@@ -200,7 +200,6 @@ public class CourseCatalogueServiceImpl extends ServiceImpl<CourseCatalogueMappe
             courseMapper.updateById(course);
         }
     }
-
     /**
      * 递归构建目录PO
      * @param chapter            前端传入的目录数据

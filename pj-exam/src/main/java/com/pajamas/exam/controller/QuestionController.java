@@ -52,6 +52,4 @@ public class QuestionController {
     public List<ExamQuestionDTO> queryQuestionsByIds(@RequestParam("ids") List<Long> ids) {
         return questionService.queryQuestionsByIds(ids);
     }
-
-
 }

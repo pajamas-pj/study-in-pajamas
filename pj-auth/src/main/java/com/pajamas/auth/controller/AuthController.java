@@ -2,6 +2,7 @@ package com.pajamas.auth.controller;
 
 import com.pajamas.api.dto.user.LoginFormDTO;
 import com.pajamas.auth.domain.vo.LoginVO;
+import com.pajamas.auth.domain.vo.LoginWxVO;
 import com.pajamas.auth.service.IAuthService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,4 +40,24 @@ public class AuthController {
     public Void logout(HttpServletRequest request, HttpServletResponse response) {
         return authService.logout(request, response);
     }
+
+
+    @ApiOperation("小程序用户登录接口")
+    @PostMapping("/login/wx")
+    public LoginWxVO loginWx(@RequestBody LoginFormDTO loginDTO, HttpServletResponse response) {
+        return authService.loginWx(loginDTO, response);
+    }
+
+    @ApiOperation("小程序刷新令牌接口  ")
+    @PostMapping("/refresh/wx")
+    public LoginWxVO refreshWx(HttpServletRequest request, HttpServletResponse response) {
+        return authService.refreshTokensWx(request, response);
+    }
+
+    @ApiOperation("小程序登出接口")
+    @PostMapping("/logout/wx")
+    public Void logoutWx(HttpServletRequest request, HttpServletResponse response) {
+        return authService.logoutWx(request, response);
+    }
+
 }

@@ -3,6 +3,4 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.pajamas.common.config.MvcConfig,\
   com.pajamas.common.config.JsonConfig,\
   com.pajamas.common.config.redisson.RedissonConfig,\
-  com.pajamas.common.advice.WrapperResponseBodyAdvice,\
-  com.pajamas.common.advice.CommonExceptionAdvice,\
   com.pajamas.common.config.mq.MqConfig
