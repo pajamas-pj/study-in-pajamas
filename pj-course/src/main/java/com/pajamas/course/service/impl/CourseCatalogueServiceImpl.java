@@ -1,10 +1,13 @@
 package com.pajamas.course.service.impl;
 
-import com.pajamas.api.client.exam.QuestionClient;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.pajamas.api.client.exam.ExamClient;
 import com.pajamas.api.dto.course.CatalogueDTO;
-import com.pajamas.api.dto.exam.ExamQuestionDTO;
+import com.pajamas.api.dto.exam.QuestionBizDTO;
+import com.pajamas.api.dto.exam.QuestionDTO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.pajamas.common.utils.CollUtils;
+import com.pajamas.common.utils.TreeDataUtils;
 import com.pajamas.course.constants.CourseConstants;
 import com.pajamas.course.domain.dto.CatalogueMediaSaveDTO;
 import com.pajamas.course.domain.dto.CatalogueQuestionSaveDTO;
@@ -34,11 +37,42 @@ public class CourseCatalogueServiceImpl extends ServiceImpl<CourseCatalogueMappe
     private final RedisIdWorker redisIdWorker;
     private final CourseMapper courseMapper;
     private final ICatalogueQuestionService catalogueQuestionService;
-    private final QuestionClient questionClient;
-
+    private final ExamClient examClient;
     @Override
-    public List<CatalogueDTO> queryCourseCatalogues(Long id, boolean b) {
-        return List.of();
+    public List<CatalogueDTO> queryCourseCatalogues(Long courseId, Boolean withPractice) {
+        //1.课程目录查询条件
+        LambdaQueryWrapper<CourseCatalogue> queryWrapper =
+                Wrappers.lambdaQuery(CourseCatalogue.class)
+                        .eq(CourseCatalogue::getCourseId, courseId);
+        if (!withPractice) {
+            //1.1课程目录不带练习设置目录查询类型
+            queryWrapper.in(CourseCatalogue::getType,
+                    Arrays.asList(CourseConstants.CataType.SECTION,
+                            CourseConstants.CataType.CHAPTER));
+        }
+        //1.2根据目录类型和序号排序
+        queryWrapper.last(" order by type,`index`");
+        //2.查询课程目录列表
+        List<CourseCatalogue> courseCatalogues = baseMapper.selectList(queryWrapper);
+        if (CollUtils.isEmpty(courseCatalogues)) {
+            return CollUtils.emptyList();
+        }
+        //3.查询课程目录对应题目ID
+        Set<Long> ids = courseCatalogues.stream().map(CourseCatalogue::getId).collect(Collectors.toSet());
+        List<QuestionBizDTO> questionBizDTOS = examClient.queryQuestionIdsByBizIds(ids);
+        //4.转化目录id和题目id对应关系
+        Map<Long, Long> cataIdAndNumMap =
+                CollUtils.isEmpty(questionBizDTOS)
+                        ? new HashMap<>() :
+                        questionBizDTOS
+                                .stream()
+                                .collect(Collectors.groupingBy(QuestionBizDTO::getBizId, Collectors.counting()));
+        // 5.组织树结构并返回
+        return TreeDataUtils.parseToTree(courseCatalogues, CatalogueDTO.class, (courseCatalogue, cataVO)->{
+            cataVO.setMediaName(courseCatalogue.getVideoName());
+            cataVO.setIndex(courseCatalogue.getIndex());
+            cataVO.setSubjectNum(cataIdAndNumMap.getOrDefault(courseCatalogue.getId(), 0L).intValue());
+        }, new CourseCatalogDataWrapper());
     }
 
     @Override
@@ -119,7 +153,7 @@ public class CourseCatalogueServiceImpl extends ServiceImpl<CourseCatalogueMappe
     }
 
     @Override
-    public List<ExamQuestionDTO> queryQuestionsByCatalogueId(Long catalogueId) {
+    public List<QuestionDTO> queryQuestionsByCatalogueId(Long catalogueId) {
         //1. 查询该目录下的题目ID集合
         List<CatalogueQuestion> relations = catalogueQuestionService.lambdaQuery()
                 .eq(CatalogueQuestion::getCatalogueId, catalogueId)
@@ -131,7 +165,7 @@ public class CourseCatalogueServiceImpl extends ServiceImpl<CourseCatalogueMappe
                 .map(CatalogueQuestion::getQuestionId)
                 .collect(Collectors.toList());
         //2. 调用考试模块Feign批量查询题目详情
-        return questionClient.queryQuestionsByIds(questionIds);
+        return examClient.queryQuestionsByIds(questionIds);
     }
 
     @Override
@@ -243,6 +277,30 @@ public class CourseCatalogueServiceImpl extends ServiceImpl<CourseCatalogueMappe
                 visitedIds.add(po.getId());
                 toSave.add(po);
             }
+        }
+    }
+
+    //课程目录树形转化模型
+    private static class CourseCatalogDataWrapper implements TreeDataUtils.DataProcessor<CatalogueDTO, CourseCatalogue> {
+        @Override
+        public Object getParentKey(CourseCatalogue courseCatalogue) {
+            return courseCatalogue.getParentCatalogueId();
+        }
+        @Override
+        public Object getKey(CourseCatalogue courseCatalogue) {
+            return courseCatalogue.getId();
+        }
+        @Override
+        public Object getRootKey() {
+            return 0L;
+        }
+        @Override
+        public List<CatalogueDTO> getChild(CatalogueDTO catalogueDTO) {
+            return catalogueDTO.getSections();
+        }
+        @Override
+        public void setChild(CatalogueDTO parent, List<CatalogueDTO> child) {
+            parent.setSections(child);
         }
     }
 }

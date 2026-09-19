@@ -1,6 +1,6 @@
 package com.pajamas.course.controller;
 
-import com.pajamas.api.dto.exam.ExamQuestionDTO;
+import com.pajamas.api.dto.exam.QuestionDTO;
 import com.pajamas.course.domain.dto.CatalogueMediaSaveDTO;
 import com.pajamas.course.domain.dto.CatalogueQuestionSaveDTO;
 import com.pajamas.course.domain.dto.CatalogueSaveDTO;
@@ -47,7 +47,7 @@ public class CourseCatalogueController {
     @ApiOperation("根据目录ID查询题目列表（含选项）")
     @GetMapping("/{catalogueId}/questions")
     @ApiImplicitParam(name = "catalogueId", value = "目录ID")
-    public List<ExamQuestionDTO> queryQuestionsByCatalogueId(@PathVariable Long catalogueId) {
+    public List<QuestionDTO> queryQuestionsByCatalogueId(@PathVariable Long catalogueId) {
         return courseCatalogueService.queryQuestionsByCatalogueId(catalogueId);
     }
 

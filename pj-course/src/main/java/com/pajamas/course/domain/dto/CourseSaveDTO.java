@@ -41,11 +41,11 @@ public class CourseSaveDTO {
 
     @ApiModelProperty(value = "课程介绍",example = "Java后端课程介绍")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_INTRODUCE_NULL)
-    private String introduce;
+    private String courseIntroduce;
     @ApiModelProperty(value = "使用人群",example = "Java后端课程使用人群")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_USE_PEOPLE_NULL)
     private String usePeople;
     @ApiModelProperty(value = "课程详情",example = "Java后端课程详情")
     @NotNull(message = CourseErrorInfo.Msg.COURSE_SAVE_DETAIL_NULL)
-    private String detail;
+    private String courseDetail;
 }

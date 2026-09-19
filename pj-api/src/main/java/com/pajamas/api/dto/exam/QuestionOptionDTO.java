@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "题目选项（Feign传输）")
-public class ExamQuestionOptionDTO {
+public class QuestionOptionDTO {
 
     @ApiModelProperty("选项标签：A、B、C、D")
     private String optionLabel;

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @ApiModel(description = "题目信息（Feign传输）")
-public class ExamQuestionDTO {
+public class QuestionDTO {
 
     @ApiModelProperty("题目ID")
     private Long id;
@@ -32,5 +32,5 @@ public class ExamQuestionDTO {
     private String explanation;
 
     @ApiModelProperty("选项列表")
-    private List<ExamQuestionOptionDTO> options;
+    private List<QuestionOptionDTO> options;
 }

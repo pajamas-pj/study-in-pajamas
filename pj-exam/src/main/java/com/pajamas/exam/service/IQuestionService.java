@@ -1,7 +1,6 @@
 package com.pajamas.exam.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.pajamas.api.dto.exam.ExamQuestionDTO;
+import com.pajamas.api.dto.exam.QuestionDTO;
 import com.pajamas.exam.domain.dto.QuestionSaveDTO;
 import com.pajamas.exam.domain.po.Question;
 import com.pajamas.exam.domain.vo.QuestionVO;
@@ -19,5 +18,7 @@ public interface IQuestionService extends IService<Question> {
 
     void deleteQuestion(Long id);
 
-    List<ExamQuestionDTO> queryQuestionsByIds(List<Long> ids);
+    List<QuestionDTO> queryQuestionsByIds(List<Long> ids);
+
+    List<QuestionDTO> queryQuestionByBizId(Long bizId);
 }

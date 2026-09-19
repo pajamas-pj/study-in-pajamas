@@ -2,6 +2,7 @@ package com.pajamas.course.service;
 
 import com.pajamas.course.domain.po.CourseContent;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pajamas.course.domain.vo.CourseContentVO;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICourseContentService extends IService<CourseContent> {
 
+    CourseContentVO getContentByCourseId(Long courseId);
 }

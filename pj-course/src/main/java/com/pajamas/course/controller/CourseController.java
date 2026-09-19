@@ -75,19 +75,19 @@ public class CourseController {
         return courseService.getSimpleInfoList(courseSimpleInfoListDTO);
     }
 
-    @GetMapping("/fullInfo{id}")
-    @ApiOperation("根据课程id获得课程详细信息")
+    @ApiOperation("分页查询课程商品")
+    @GetMapping("/page")
+    public PageDTO<CourseItemPageVO> getCourses(@Validated CoursePageQuery coursePageQuery) {
+        return courseService.getCourses(coursePageQuery);
+    }
+
+    @GetMapping("/fullInfo/{id}")
+    @ApiOperation("根据课程id获得课程详细信息（目录、教师）")
     public CourseFullInfoDTO getCourseInfoById(
             @PathVariable("id") Long id,
             @RequestParam(value = "withCatalogue", required = false) boolean withCatalogue,
             @RequestParam(value = "withTeachers", required = false) boolean withTeachers
     ){
         return courseService.getInfoById(id, withCatalogue, withTeachers);
-    }
-
-    @ApiOperation("分页查询课程商品")
-    @GetMapping("/page")
-    public PageDTO<CourseItemPageVO> getCourses(@Validated CoursePageQuery coursePageQuery) {
-        return courseService.getCourses(coursePageQuery);
     }
 }

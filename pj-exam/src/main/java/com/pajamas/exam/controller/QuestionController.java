@@ -1,12 +1,13 @@
 package com.pajamas.exam.controller;
 
-import com.pajamas.api.dto.exam.ExamQuestionDTO;
+import com.pajamas.api.dto.exam.QuestionDTO;
 import com.pajamas.exam.domain.dto.QuestionSaveDTO;
 import com.pajamas.exam.domain.vo.QuestionVO;
 import com.pajamas.exam.service.IQuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +50,13 @@ public class QuestionController {
 
     @ApiOperation("根据题目id集合批量查询题目（含选项）")
     @GetMapping("/batch")
-    public List<ExamQuestionDTO> queryQuestionsByIds(@RequestParam("ids") List<Long> ids) {
+    public List<QuestionDTO> queryQuestionsByIds(@RequestParam("ids") List<Long> ids) {
         return questionService.queryQuestionsByIds(ids);
+    }
+
+    @ApiOperation("查询业务关联的题目列表")
+    @GetMapping("/listOfBiz")
+    public List<QuestionDTO> queryQuestionByBizId(@ApiParam("要查询的题目的id集合") @RequestParam("bizId") Long bizId){
+        return questionService.queryQuestionByBizId(bizId);
     }
 }

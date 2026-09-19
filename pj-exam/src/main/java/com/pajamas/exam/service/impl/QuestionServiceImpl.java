@@ -1,14 +1,16 @@
 package com.pajamas.exam.service.impl;
 
-import com.pajamas.api.dto.exam.ExamQuestionDTO;
-import com.pajamas.api.dto.exam.ExamQuestionOptionDTO;
-import com.pajamas.exam.domain.dto.QuestionOptionDTO;
+import com.pajamas.api.dto.exam.QuestionDTO;
+import com.pajamas.api.dto.exam.QuestionOptionDTO;
+import com.pajamas.common.utils.CollUtils;
 import com.pajamas.exam.domain.dto.QuestionSaveDTO;
 import com.pajamas.exam.domain.po.Question;
+import com.pajamas.exam.domain.po.QuestionBiz;
 import com.pajamas.exam.domain.po.QuestionDetail;
 import com.pajamas.exam.domain.po.QuestionOption;
 import com.pajamas.exam.domain.vo.QuestionVO;
 import com.pajamas.exam.mapper.QuestionMapper;
+import com.pajamas.exam.service.IQuestionBizService;
 import com.pajamas.exam.service.IQuestionDetailService;
 import com.pajamas.exam.service.IQuestionOptionService;
 import com.pajamas.exam.service.IQuestionService;
@@ -28,6 +30,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
     private final IQuestionDetailService questionDetailService;
     private final IQuestionOptionService questionOptionService;
+    private final IQuestionBizService bizService;
 
     @Override
     @Transactional
@@ -83,7 +86,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         List<QuestionOption> options = questionOptionService.queryByQuestionId(id);
         if (options != null && !options.isEmpty()) {
             vo.setOptions(options.stream().map(o ->
-                    BeanUtils.copyBean(o, QuestionOptionDTO.class)
+                    BeanUtils.copyBean(o, com.pajamas.exam.domain.dto.QuestionOptionDTO.class)
             ).collect(Collectors.toList()));
         }
 
@@ -102,7 +105,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public List<ExamQuestionDTO> queryQuestionsByIds(List<Long> ids) {
+    public List<QuestionDTO> queryQuestionsByIds(List<Long> ids) {
         //1. 参数校验
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyList();
@@ -125,7 +128,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
                 .collect(Collectors.toMap(QuestionDetail::getQuestionId, d -> d, (a, b) -> a));
         //5. 内存组装 VO
         return questions.stream().map(q -> {
-            ExamQuestionDTO vo = BeanUtils.copyBean(q, ExamQuestionDTO.class);
+            QuestionDTO vo = BeanUtils.copyBean(q, QuestionDTO.class);
             QuestionDetail detail = detailMap.get(q.getId());
             if (detail != null) {
                 vo.setAnswer(detail.getAnswer());
@@ -134,11 +137,26 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             List<QuestionOption> opts = optionMap.get(q.getId());
             if (opts != null && !opts.isEmpty()) {
                 vo.setOptions(opts.stream().map(o ->
-                        BeanUtils.copyBean(o, ExamQuestionOptionDTO.class)
+                        BeanUtils.copyBean(o, QuestionOptionDTO.class)
                 ).collect(Collectors.toList()));
             }
             return vo;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuestionDTO> queryQuestionByBizId(Long bizId) {
+        // 1.查询中间表
+        List<QuestionBiz> list = bizService.lambdaQuery()
+                .eq(QuestionBiz::getBizId, bizId)
+                .list();
+        if (CollUtils.isEmpty(list)) {
+            return CollUtils.emptyList();
+        }
+        // 2.获取问题id
+        List<Long> ids = list.stream().map(QuestionBiz::getQuestionId).collect(Collectors.toList());
+        // 3.查询数据集合
+        return queryQuestionsByIds(ids);
     }
 
     private void saveDetail(Long questionId, String answer, String explanation) {
@@ -149,7 +167,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         questionDetailService.save(detail);
     }
 
-    private void saveOptions(Long questionId, List<QuestionOptionDTO> optionDTOs) {
+    private void saveOptions(Long questionId, List<com.pajamas.exam.domain.dto.QuestionOptionDTO> optionDTOs) {
         if (optionDTOs == null || optionDTOs.isEmpty()) {
             return;
         }

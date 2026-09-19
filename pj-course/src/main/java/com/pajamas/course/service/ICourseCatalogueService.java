@@ -1,7 +1,7 @@
 package com.pajamas.course.service;
 
 import com.pajamas.api.dto.course.CatalogueDTO;
-import com.pajamas.api.dto.exam.ExamQuestionDTO;
+import com.pajamas.api.dto.exam.QuestionDTO;
 import com.pajamas.course.domain.dto.CatalogueMediaSaveDTO;
 import com.pajamas.course.domain.dto.CatalogueQuestionSaveDTO;
 import com.pajamas.course.domain.dto.CatalogueSaveDTO;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public interface ICourseCatalogueService extends IService<CourseCatalogue> {
 
-    List<CatalogueDTO> queryCourseCatalogues(Long id, boolean b);
+    List<CatalogueDTO> queryCourseCatalogues(Long id, Boolean withPractice);
 
     void saveCatalogue(Long courseId, List<CatalogueSaveDTO> chapters);
 
@@ -28,5 +28,5 @@ public interface ICourseCatalogueService extends IService<CourseCatalogue> {
 
     void saveQuestion(Long courseId, List<CatalogueQuestionSaveDTO> questionList);
 
-    List<ExamQuestionDTO> queryQuestionsByCatalogueId(Long catalogueId);
+    List<QuestionDTO> queryQuestionsByCatalogueId(Long catalogueId);
 }
