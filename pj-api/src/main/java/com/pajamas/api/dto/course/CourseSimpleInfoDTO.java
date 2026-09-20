@@ -1,6 +1,7 @@
 package com.pajamas.api.dto.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pajamas.api.constants.CourseStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,7 +20,7 @@ public class CourseSimpleInfoDTO {
     @ApiModelProperty("价格")
     private Integer price;
     @ApiModelProperty("课程状态")
-    private Integer status;
+    private CourseStatus status;
     @ApiModelProperty("是否是免费课程")
     private Boolean free;
     @ApiModelProperty("一级分类id")

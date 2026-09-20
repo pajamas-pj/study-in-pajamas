@@ -1,6 +1,7 @@
 package com.pajamas.trade.controller;
 
 import com.pajamas.trade.domain.dto.CartAddDTO;
+import com.pajamas.trade.domain.dto.CartItemUpdateDTO;
 import com.pajamas.trade.domain.vo.CartVO;
 import com.pajamas.trade.service.ICartService;
 import io.swagger.annotations.Api;
@@ -47,5 +48,26 @@ public class CartController {
     @ApiOperation("按店铺查询购物车")
     public CartVO getCartByShopId(@PathVariable("shopId") Long shopId) {
         return cartService.getCartByShopId(shopId);
+    }
+
+
+    @PutMapping("/items/check/{id}")
+    @ApiOperation("修改购物车项选中状态")
+    public void updateChecked(@PathVariable("id") Long id,
+                              @RequestBody CartItemUpdateDTO dto) {
+        cartService.updateChecked(id, dto.getChecked());
+    }
+
+    @PutMapping("/items/check")
+    @ApiOperation("批量修改购物车项选中状态")
+    public void batchUpdateChecked(@RequestBody CartItemUpdateDTO dto) {
+        cartService.batchUpdateChecked(dto.getIds(), dto.getChecked());
+    }
+
+    @PutMapping("/items/quantity/{id}")
+    @ApiOperation("修改购物车项数量")
+    public void updateQuantity(@PathVariable("id") Long id,
+                               @RequestBody CartItemUpdateDTO dto) {
+        cartService.updateQuantity(id, dto.getQuantity());
     }
 }

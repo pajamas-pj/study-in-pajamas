@@ -1,6 +1,7 @@
 package com.pajamas.trade.service.impl;
 
 import com.pajamas.api.client.course.CourseClient;
+import com.pajamas.api.constants.CourseStatus;
 import com.pajamas.api.dto.course.CourseSimpleInfoDTO;
 import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.CollUtils;
@@ -50,7 +51,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         //2.获取用户id
         Long userId = UserContext.getUser();
         //3.查询购物车（用于更新）
-        Long shopId = dto.getShopId();
+        Long shopId = dto.getShopId() != null ? dto.getShopId() : 0L;
         Cart cart = lambdaQuery().eq(Cart::getUserId, userId)
                 .eq(Cart::getShopId, shopId)
                 .one();
@@ -58,9 +59,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             //3.1为空则新增
             cart = new Cart();
             cart.setUserId(userId);
-            if(shopId != null){
-                cart.setShopId(shopId);
-            }
+            cart.setShopId(shopId);
             cart.setLastAccessTime(LocalDateTime.now());
             save(cart);
         }
@@ -191,14 +190,12 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             CartItemVO itemVO = new CartItemVO();
             BeanUtils.copyProperties(item, itemVO);
             CourseSimpleInfoDTO course = courseMap.get(item.getSkuId());
-            boolean expired = true;
             if (course != null) {
                 itemVO.setCourseName(course.getName());
                 itemVO.setCoverUrl(course.getCoverUrl());
                 itemVO.setRealPrice(course.getPrice());
-                expired = course.getStatus() != 2 || (course.getPurchaseEndTime() != null
-                        && course.getPurchaseEndTime().isBefore(LocalDateTime.now()));
-                itemVO.setExpired(expired);
+                itemVO.setExpired(course.getStatus() != CourseStatus.ON_SHELF || (course.getPurchaseEndTime() != null
+                        && course.getPurchaseEndTime().isBefore(LocalDateTime.now())));
             }
             itemVOs.add(itemVO);
         }
@@ -208,7 +205,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     /**
      * 更新统计字段
-     * @param cartId
+     * @param cartId 购物车id
      */
     private void recalculateCart(Long cartId) {
         List<CartItem> items = cartItemService.lambdaQuery()
@@ -222,5 +219,83 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             cart.setLastAccessTime(LocalDateTime.now());
             updateById(cart);
         }
+    }
+
+    @Override
+    @Transactional
+    public void updateChecked(Long itemId, Integer checked) {
+        //1.校验参数
+        if (itemId == null) {
+            throw new BizIllegalException("购物车项id不能为空");
+        }
+        if (checked == null) {
+            throw new BizIllegalException("选中状态不能为空");
+        }
+        if (checked != 0 && checked != 1) {
+            throw new BizIllegalException("选中状态非法");
+        }
+        //2.获取用户id
+        Long userId = UserContext.getUser();
+        //3.校验购物车项归属
+        CartItem item = cartItemService.lambdaQuery()
+                .eq(CartItem::getId, itemId)
+                .eq(CartItem::getUserId, userId)
+                .one();
+        if (item == null) {
+            throw new BizIllegalException("购物车项不存在");
+        }
+        //4.更新选中状态
+        item.setChecked(checked);
+        cartItemService.updateById(item);
+    }
+
+    @Override
+    @Transactional
+    public void batchUpdateChecked(List<Long> itemIds, Integer checked) {
+        //1.校验参数
+        if (CollUtils.isEmpty(itemIds)) {
+            throw new BizIllegalException("购物车项id集合不能为空");
+        }
+        if (checked == null) {
+            throw new BizIllegalException("选中状态不能为空");
+        }
+        if (checked != 0 && checked != 1) {
+            throw new BizIllegalException("选中状态非法");
+        }
+        //2.获取用户id
+        Long userId = UserContext.getUser();
+        //3.批量更新（仅限当前用户自己的购物车项）
+        cartItemService.lambdaUpdate()
+                .in(CartItem::getId, itemIds)
+                .eq(CartItem::getUserId, userId)
+                .set(CartItem::getChecked, checked)
+                .update();
+    }
+
+    @Override
+    @Transactional
+    public void updateQuantity(Long itemId, Integer quantity) {
+        //1.校验参数
+        if (itemId == null) {
+            throw new BizIllegalException("购物车项id不能为空");
+        }
+        if (quantity == null || quantity < 1) {
+            throw new BizIllegalException("数量必须大于0");
+        }
+        //2.获取用户id
+        Long userId = UserContext.getUser();
+        //3.校验购物车项归属
+        CartItem item = cartItemService.lambdaQuery()
+                .eq(CartItem::getId, itemId)
+                .eq(CartItem::getUserId, userId)
+                .one();
+        if (item == null) {
+            throw new BizIllegalException("购物车项不存在");
+        }
+        //4.更新数量
+        item.setQuantity(quantity);
+        cartItemService.updateById(item);
+        //5.更新统计字段（总件数变化）
+        recalculateCart(item.getCartId());
     }
 }
