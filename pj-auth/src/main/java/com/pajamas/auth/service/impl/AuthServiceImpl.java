@@ -140,7 +140,7 @@ public class AuthServiceImpl implements IAuthService {
         // 3. 清除客户端 Cookie
         ResponseCookie clearCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .path("/auth/refresh")
+                .path("/auth")
                 .maxAge(0)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());

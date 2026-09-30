@@ -27,9 +27,5 @@ public interface ICartService extends IService<Cart> {
 
     CartVO getCartByShopId(Long shopId);
 
-    void updateChecked(Long id, Integer checked);
-
-    void batchUpdateChecked(List<Long> ids, Integer checked);
-
     void updateQuantity(Long id, Integer quantity);
 }

@@ -24,6 +24,11 @@
             <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
             <version>4.1.0</version>
         </dependency>
+        <!--时间格式数据-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
         <!--SpringBoot自动配置-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -13,21 +13,40 @@ spring:
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/users/**
+            - Path=/us/users/**
+          filters:
+            - StripPrefix=1
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/auth/**
+            - Path=/as/auth/**
           filters:
-            - name: TokenRelay  # 这个过滤器是关键，负责传递 Bearer Token 和 Cookie
+            - StripPrefix=1
+            - name: TokenRelay       # 这个过滤器是关键，负责传递 Bearer Token 和 Cookie
         - id: course-service
           uri: lb://course-service
           predicates:
-            - Path=/courses/**
+            - Path=/cs/courses/**
+          filters:
+            - StripPrefix=1
         - id: exam-service
           uri: lb://exam-service
           predicates:
-            - Path=/exam/**
+            - Path=/es/questions/**
+          filters:
+            - StripPrefix=1
+        - id: trade-service
+          uri: lb://trade-service
+          predicates:
+            - Path=/ts/**
+          filters:
+            - StripPrefix=1
+        - id: promotion-service
+          uri: lb://promotion-service
+          predicates:
+            - Path=/ps/**
+          filters:
+            - StripPrefix=1
 logging:
   level:
     com.pajamas: debug
@@ -45,7 +64,7 @@ pj:
     refreshTokenTTL: 4h
   auth:
     excludePaths:
-      - /users/sign
-      - /auth/login/**
-      - /auth/refresh/**
-      - /auth/logout/**
+      - /us/users/sign
+      - /as/auth/login/**
+      - /as/auth/refresh/**
+      - /as/auth/logout/**

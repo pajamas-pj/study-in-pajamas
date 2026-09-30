@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class ExchangeCodeServiceImpl extends ServiceImpl<ExchangeCodeMapper, Exc
 
     @Override
     @Async("generateExchangeCodeExecutor")
+    @Transactional
     public void asyncGenerateCode(Coupon coupon) {
         // 发放数量
         Integer totalNum = coupon.getTotalNum();

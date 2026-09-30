@@ -1,15 +1,12 @@
 package com.pajamas.promotion.service.impl;
 
-import cn.hutool.core.bean.copier.CopyOptions;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pajamas.common.config.mq.RabbitMqHelper;
 import com.pajamas.common.config.redisson.annotations.Lock;
 import com.pajamas.common.constants.MqConstants;
-
 import com.pajamas.common.exceptions.BadRequestException;
 import com.pajamas.common.exceptions.BizIllegalException;
-import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.DateUtils;
-import com.pajamas.common.utils.NumberUtils;
 import com.pajamas.common.utils.UserContext;
 import com.pajamas.promotion.constants.PromotionConstants;
 import com.pajamas.promotion.domain.dto.UserCouponDTO;
@@ -21,7 +18,6 @@ import com.pajamas.promotion.mapper.CouponMapper;
 import com.pajamas.promotion.mapper.UserCouponMapper;
 import com.pajamas.promotion.service.IExchangeCodeService;
 import com.pajamas.promotion.service.IUserCouponService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pajamas.promotion.utils.CodeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -29,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -148,11 +143,11 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
         save(uc);
     }
     @Override
-    // @Lock(name = "lock:coupon:#{T(com.tianji.common.utils.UserContext).getUser()}")
+    @Lock(name = "lock:coupon:#{T(com.pajamas.common.utils.UserContext).getUser()}")
     public void exchangeCoupon(String code) {
         // 1.校验并解析兑换码
         long serialNum = CodeUtil.parseCode(code);
-       // 2.校验是否已经兑换 SETBIT KEY 4 1
+       // 2 .校验是否已经兑换 SETBIT KEY 4 1
         boolean exchanged = codeService.updateExchangeMark(serialNum, true);
         if (exchanged) {
             throw new BizIllegalException("兑换码已经被兑换过了");

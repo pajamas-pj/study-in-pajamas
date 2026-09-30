@@ -147,7 +147,9 @@ public class DiscountServiceImpl implements IDiscountService {
     }
 
     private CouponDiscountDTO calculateSolutionDiscount(
-            Map<Coupon, List<OrderCourseDTO>> couponMap, List<OrderCourseDTO> courses, List<Coupon> solution) {
+            Map<Coupon, List<OrderCourseDTO>> couponMap,
+            List<OrderCourseDTO> courses,
+            List<Coupon> solution) {
         // 1.初始化DTO
         CouponDiscountDTO dto = new CouponDiscountDTO();
         // 2.初始化折扣明细的映射
@@ -186,7 +188,7 @@ public class DiscountServiceImpl implements IDiscountService {
             // 更新课程已计算数量
             times++;
             int discount = 0;
-            // 判断是否是最后一个课程
+              // 判断是否是最后一个课程
             if (times == courses.size()) {
                 // 是最后一个课程，总折扣金额 - 之前所有商品的折扣金额之和
                 discount = remainDiscount;

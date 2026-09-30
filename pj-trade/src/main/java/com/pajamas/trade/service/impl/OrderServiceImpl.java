@@ -16,12 +16,15 @@ import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.UserContext;
+import com.pajamas.trade.constants.TradeErrorInfo;
 import com.pajamas.trade.domain.dto.OrderCreateDTO;
 import com.pajamas.trade.domain.dto.OrderItemDTO;
 import com.pajamas.trade.domain.po.CartItem;
 import com.pajamas.trade.domain.po.Order;
 import com.pajamas.trade.domain.po.OrderItem;
 import com.pajamas.trade.domain.po.OrderLog;
+import com.pajamas.trade.domain.vo.OrderConfirmVO;
+import com.pajamas.trade.domain.vo.OrderCourseVO;
 import com.pajamas.trade.domain.vo.OrderCreateVO;
 import com.pajamas.trade.mapper.OrderMapper;
 import com.pajamas.trade.service.ICartItemService;
@@ -31,6 +34,7 @@ import com.pajamas.trade.service.IOrderService;
 import com.pajamas.trade.utils.RedisIdWorker;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -45,6 +49,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService{
@@ -233,6 +238,32 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //9.返回结果
         OrderCreateVO vo = new OrderCreateVO();
         vo.setOrderNo(orderNo);
+        return vo;
+    }
+
+    @Override
+    public OrderConfirmVO prePlaceOrder(List<Long> courseIds) {
+        // 1.查询课程信息
+        List<CourseSimpleInfoDTO> courseInfos = courseClient.getSimpleInfoList(courseIds);
+        if (CollUtils.isEmpty(courseInfos)) {
+            throw new BizIllegalException(TradeErrorInfo.COURSE_NOT_EXISTS);
+        }
+        List<OrderCourseVO> courses = BeanUtils.copyList(courseInfos, OrderCourseVO.class);
+        // 2.计算总价
+        int total = courseInfos.stream().mapToInt(CourseSimpleInfoDTO::getPrice).sum();
+        // 3.计算折扣
+        List<OrderCourseDTO> orderCourses = courseInfos.stream()
+                .map(ci -> new OrderCourseDTO().setId(ci.getId()).setCateId(ci.getThirdCateId()).setPrice(ci.getPrice()))
+                .collect(Collectors.toList());
+        List<CouponDiscountDTO> discountSolution = promotionClient.findDiscountSolution(orderCourses);
+        // 4.生成订单id
+        String orderId = getIdempotentToken();
+        // 5.组织返回
+        OrderConfirmVO vo = new OrderConfirmVO();
+        vo.setOrderId(orderId);
+        vo.setTotalAmount(total);
+        vo.setDiscounts(discountSolution);
+        vo.setCourses(courses);
         return vo;
     }
 

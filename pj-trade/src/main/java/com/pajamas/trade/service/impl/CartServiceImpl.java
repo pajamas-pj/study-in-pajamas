@@ -223,57 +223,6 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     @Transactional
-    public void updateChecked(Long itemId, Integer checked) {
-        //1.校验参数
-        if (itemId == null) {
-            throw new BizIllegalException("购物车项id不能为空");
-        }
-        if (checked == null) {
-            throw new BizIllegalException("选中状态不能为空");
-        }
-        if (checked != 0 && checked != 1) {
-            throw new BizIllegalException("选中状态非法");
-        }
-        //2.获取用户id
-        Long userId = UserContext.getUser();
-        //3.校验购物车项归属
-        CartItem item = cartItemService.lambdaQuery()
-                .eq(CartItem::getId, itemId)
-                .eq(CartItem::getUserId, userId)
-                .one();
-        if (item == null) {
-            throw new BizIllegalException("购物车项不存在");
-        }
-        //4.更新选中状态
-        item.setChecked(checked);
-        cartItemService.updateById(item);
-    }
-
-    @Override
-    @Transactional
-    public void batchUpdateChecked(List<Long> itemIds, Integer checked) {
-        //1.校验参数
-        if (CollUtils.isEmpty(itemIds)) {
-            throw new BizIllegalException("购物车项id集合不能为空");
-        }
-        if (checked == null) {
-            throw new BizIllegalException("选中状态不能为空");
-        }
-        if (checked != 0 && checked != 1) {
-            throw new BizIllegalException("选中状态非法");
-        }
-        //2.获取用户id
-        Long userId = UserContext.getUser();
-        //3.批量更新（仅限当前用户自己的购物车项）
-        cartItemService.lambdaUpdate()
-                .in(CartItem::getId, itemIds)
-                .eq(CartItem::getUserId, userId)
-                .set(CartItem::getChecked, checked)
-                .update();
-    }
-
-    @Override
-    @Transactional
     public void updateQuantity(Long itemId, Integer quantity) {
         //1.校验参数
         if (itemId == null) {

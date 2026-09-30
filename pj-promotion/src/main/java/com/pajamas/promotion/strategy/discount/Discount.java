@@ -6,7 +6,7 @@ import com.pajamas.promotion.domain.po.Coupon;
 /**
  * <p>优惠券折扣功能接口</p>
  */
-public interface Discount {
+public interface  Discount {
     /**
      * 判断当前价格是否满足优惠券使用限制
      * @param totalAmount 订单总价

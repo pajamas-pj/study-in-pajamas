@@ -50,20 +50,6 @@ public class CartController {
         return cartService.getCartByShopId(shopId);
     }
 
-
-    @PutMapping("/items/check/{id}")
-    @ApiOperation("修改购物车项选中状态")
-    public void updateChecked(@PathVariable("id") Long id,
-                              @RequestBody CartItemUpdateDTO dto) {
-        cartService.updateChecked(id, dto.getChecked());
-    }
-
-    @PutMapping("/items/check")
-    @ApiOperation("批量修改购物车项选中状态")
-    public void batchUpdateChecked(@RequestBody CartItemUpdateDTO dto) {
-        cartService.batchUpdateChecked(dto.getIds(), dto.getChecked());
-    }
-
     @PutMapping("/items/quantity/{id}")
     @ApiOperation("修改购物车项数量")
     public void updateQuantity(@PathVariable("id") Long id,
