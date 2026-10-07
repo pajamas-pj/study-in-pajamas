@@ -1,6 +1,7 @@
 package com.pajamas.trade.service;
 
 import com.pajamas.trade.domain.dto.CartAddDTO;
+import com.pajamas.trade.domain.dto.CartUserDTO;
 import com.pajamas.trade.domain.po.Cart;
 import com.pajamas.trade.domain.vo.CartVO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -28,4 +29,6 @@ public interface ICartService extends IService<Cart> {
     CartVO getCartByShopId(Long shopId);
 
     void updateQuantity(Long id, Integer quantity);
+
+    void deleteCartByUserAndCourseIds(CartUserDTO cartUserDTO);
 }

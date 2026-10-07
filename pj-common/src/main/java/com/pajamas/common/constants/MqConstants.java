@@ -41,7 +41,10 @@ public interface MqConstants {
         String COURSE_DELETE_KEY = "course.delete";
 
         /*订单有关的RoutingKey*/
+        String ORDER_CART_KEY = "order.cart";
         String ORDER_PAY_KEY = "order.pay";
+        String ORDER_LOG_KEY = "order.log";
+        String ORDER_STATUS_KEY = "order.status";
         String ORDER_REFUND_KEY = "order.refund";
 
         /*积分相关RoutingKey*/

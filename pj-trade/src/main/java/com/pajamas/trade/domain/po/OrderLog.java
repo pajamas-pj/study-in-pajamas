@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.pajamas.trade.enums.OrderStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -39,12 +41,12 @@ public class OrderLog implements Serializable {
     /**
      * 原状态
      */
-    private Integer fromStatus;
+    private OrderStatus fromStatus;
 
     /**
      * 新状态
      */
-    private Integer toStatus;
+    private OrderStatus toStatus;
 
     /**
      * 操作人

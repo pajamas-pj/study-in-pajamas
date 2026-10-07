@@ -54,4 +54,5 @@ public class CouponController {
     public List<CouponVO> queryIssuingCoupons(){
         return couponService.queryIssuingCoupons();
     }
+
 }

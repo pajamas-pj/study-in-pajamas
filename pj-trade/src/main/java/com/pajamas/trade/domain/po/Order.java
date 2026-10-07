@@ -1,10 +1,15 @@
 package com.pajamas.trade.domain.po;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.pajamas.trade.enums.OrderStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -42,29 +47,24 @@ public class Order implements Serializable {
     private Long userId;
 
     /**
-     * 店铺id
-     */
-    private Long shopId;
-
-    /**
      * 商品总金额(分)
      */
-    private Long totalAmount;
+    private Integer totalAmount;
 
     /**
      * 优惠总金额(分)
      */
-    private Long discountAmount;
+    private Integer discountAmount;
 
     /**
      * 实付金额(分)
      */
-    private Long payAmount;
+    private Integer payAmount;
 
     /**
      * 状态:1-待支付 2-已支付 3-已完成 4-已关闭 5-退款中 6-已退款
      */
-    private Integer orderStatus;
+    private OrderStatus orderStatus;
 
     /**
      * 支付方式:1-微信 2-支付宝
@@ -77,7 +77,7 @@ public class Order implements Serializable {
     private Integer source;
 
     /**
-     * 买家备注
+     * 备注
      */
     private String remark;
 
@@ -90,6 +90,17 @@ public class Order implements Serializable {
      * 扩展字段
      */
     private String extend;
+
+    /**
+     * 支付渠道
+     */
+    private String payChannel;
+
+    /**
+     * 优惠券id
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Long> couponIds;
 
     /**
      * 支付时间

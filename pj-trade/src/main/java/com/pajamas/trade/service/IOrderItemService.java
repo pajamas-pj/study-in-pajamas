@@ -1,7 +1,12 @@
 package com.pajamas.trade.service;
 
+import com.pajamas.trade.domain.po.Order;
 import com.pajamas.trade.domain.po.OrderItem;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pajamas.trade.domain.po.RefundOrder;
+import com.pajamas.trade.domain.vo.OrderProgressNodeVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +18,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IOrderItemService extends IService<OrderItem> {
 
+    List<OrderItem> queryByOrderId(Long id);
+
+    List<OrderProgressNodeVO> packageProgressNodes(Order order, RefundOrder refundOrder);
 }

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.pajamas.trade.enums.OrderStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -69,17 +71,17 @@ public class OrderItem implements Serializable {
     /**
      * 原价(分)
      */
-    private Long price;
+    private Integer price;
 
     /**
      * 优惠分摊(分)
      */
-    private Long discountAmount;
+    private Integer discountAmount;
 
     /**
      * 实付小计(分)
      */
-    private Long payAmount;
+    private Integer payAmount;
 
     /**
      * 数量
@@ -87,14 +89,39 @@ public class OrderItem implements Serializable {
     private Integer quantity;
 
     /**
+     * 备注
+     */
+    private String remark;
+
+    /**
      * 状态:1-待支付 2-已支付 3-已完成 4-已关闭 5-退款中 6-已退款
      */
-    private Integer itemStatus;
+    private OrderStatus itemStatus;
 
     /**
      * 活动id
      */
     private Long activityId;
+
+    /**
+     * 课程学习有效期，单位：月。从付款时间开始算
+     */
+    private Integer validDuration;
+
+    /**
+     * 课程学习过期时间
+     */
+    private LocalDateTime courseExpireTime;
+
+    /**
+     * 支付方式:1-微信 2-支付宝
+     */
+    private Integer paymentMethod;
+
+    /**
+     * 支付渠道名称
+     */
+    private String payChannel;
 
     /**
      * 扩展字段

@@ -3,9 +3,11 @@ package com.pajamas.trade.controller;
 import com.pajamas.trade.domain.dto.OrderCreateDTO;
 import com.pajamas.trade.domain.vo.OrderConfirmVO;
 import com.pajamas.trade.domain.vo.OrderCreateVO;
+import com.pajamas.trade.domain.vo.OrderVO;
 import com.pajamas.trade.service.IOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +37,9 @@ public class OrderController {
     public OrderCreateVO createOrder(@Valid @RequestBody OrderCreateDTO dto) {
         return orderService.createOrder(dto);
     }
-
-
+    @ApiOperation("根据id查询订单详细信息")
+    @GetMapping("/{id}")
+    public OrderVO queryOrderById(@ApiParam("订单id")@PathVariable("id") Long id){
+        return orderService.queryOrderById(id);
+    }
 }

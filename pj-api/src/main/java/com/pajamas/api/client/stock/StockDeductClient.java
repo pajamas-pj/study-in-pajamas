@@ -7,8 +7,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
-
 
 @FeignClient(name = "stock-service", contextId = "stock-deduct", path = "/stock-TCC", fallbackFactory = StockDeductFallback.class)
 public interface StockDeductClient {

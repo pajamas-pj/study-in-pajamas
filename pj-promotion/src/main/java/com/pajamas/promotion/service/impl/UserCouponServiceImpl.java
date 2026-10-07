@@ -6,6 +6,7 @@ import com.pajamas.common.config.redisson.annotations.Lock;
 import com.pajamas.common.constants.MqConstants;
 import com.pajamas.common.exceptions.BadRequestException;
 import com.pajamas.common.exceptions.BizIllegalException;
+import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.DateUtils;
 import com.pajamas.common.utils.UserContext;
 import com.pajamas.promotion.constants.PromotionConstants;
@@ -14,10 +15,12 @@ import com.pajamas.promotion.domain.po.Coupon;
 import com.pajamas.promotion.domain.po.ExchangeCode;
 import com.pajamas.promotion.domain.po.UserCoupon;
 import com.pajamas.promotion.enums.ExchangeCodeStatus;
+import com.pajamas.promotion.enums.UserCouponStatus;
 import com.pajamas.promotion.mapper.CouponMapper;
 import com.pajamas.promotion.mapper.UserCouponMapper;
 import com.pajamas.promotion.service.IExchangeCodeService;
 import com.pajamas.promotion.service.IUserCouponService;
+import com.pajamas.promotion.strategy.discount.DiscountStrategy;
 import com.pajamas.promotion.utils.CodeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -25,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -184,5 +189,18 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
             codeService.updateExchangeMark(serialNum, false);
             throw e;
         }
+    }
+
+    @Override
+    public List<String> queryDiscountRules(List<Long> userCouponIds) {
+        // 1.查询优惠券信息
+        List<Coupon> coupons = baseMapper.queryCouponByUserCouponIds(userCouponIds, UserCouponStatus.USED);
+        if (CollUtils.isEmpty(coupons)) {
+            return CollUtils.emptyList();
+        }
+        // 2.转换规则
+        return coupons.stream()
+                .map(c -> DiscountStrategy.getDiscount(c.getDiscountType()).getRule(c))
+                .collect(Collectors.toList());
     }
 }

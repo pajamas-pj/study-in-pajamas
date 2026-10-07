@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IOrderLogService extends IService<OrderLog> {
 
+    void createOrderLog(OrderLog orderLog);
 }

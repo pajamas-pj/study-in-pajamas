@@ -8,6 +8,7 @@ import com.pajamas.promotion.service.IDiscountService;
 import com.pajamas.promotion.service.IUserCouponService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,5 +51,12 @@ public class UserCouponController {
     @PostMapping("/discount")
     public CouponDiscountDTO queryDiscountDetailByOrder(@RequestBody OrderCouponDTO orderCouponDTO){
         return discountService.queryDiscountDetailByOrder(orderCouponDTO);
+    }
+
+    @ApiOperation("查询优惠券规则")
+    @GetMapping("/rules")
+    public List<String> queryDiscountRules(
+            @ApiParam("用户优惠券id集合") @RequestParam("couponIds") List<Long> userCouponIds){
+        return userCouponService.queryDiscountRules(userCouponIds);
     }
 }

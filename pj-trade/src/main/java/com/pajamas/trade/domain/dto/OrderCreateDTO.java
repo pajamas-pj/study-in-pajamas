@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -16,13 +15,10 @@ public class OrderCreateDTO {
     @NotEmpty(message = "幂等token不能为空")
     private String idempotentToken;
 
-    @ApiModelProperty(value = "店铺id", example = "0")
-    private Long shopId;
-
     @ApiModelProperty("来源:0-购物车 1-直接购买")
     private Integer source;
 
-    @ApiModelProperty("买家备注")
+    @ApiModelProperty("状态备注")
     private String remark;
 
     @ApiModelProperty(value = "商品列表", required = true)

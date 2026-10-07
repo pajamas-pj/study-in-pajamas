@@ -1,5 +1,7 @@
-package com.pajamas.trade.constants;
+package com.pajamas.trade.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.pajamas.common.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +16,11 @@ public enum OrderStatus implements BaseEnum {
     CLOSED(3, "已关闭", "交易关闭"),
     FINISHED(4, "已完成", "交易完成"),
     ENROLLED(5, "已报名", "免费报名"),
-    REFUNDED(6, "申请退款", "申请退款");
+    REFUNDING(6, "申请退款", "申请退款"),
+    REFUNDED(7, "已退款", "已申请退款");
 
+    @JsonValue
+    @EnumValue
     private final int value;
     private final String desc;
     private final String progressName;
@@ -48,7 +53,7 @@ public enum OrderStatus implements BaseEnum {
         return status.getProgressName();
     }
 
-    public static boolean canRefund(Integer value) {
-        return PAYED.equalsValue(value);
+    public static boolean canRefund(BaseEnum value) {
+        return PAYED == value;
     }
 }

@@ -7,6 +7,7 @@ import com.pajamas.common.exceptions.BizIllegalException;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.UserContext;
 import com.pajamas.trade.domain.dto.CartAddDTO;
+import com.pajamas.trade.domain.dto.CartUserDTO;
 import com.pajamas.trade.domain.po.Cart;
 import com.pajamas.trade.domain.po.CartItem;
 import com.pajamas.trade.domain.vo.CartItemVO;
@@ -246,5 +247,23 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         cartItemService.updateById(item);
         //5.更新统计字段（总件数变化）
         recalculateCart(item.getCartId());
+    }
+
+    @Override
+    public void deleteCartByUserAndCourseIds(CartUserDTO cartUserDTO) {
+        Long userId = cartUserDTO.getUserId();
+        List<Long> itemIds = cartUserDTO.getIds();
+        if (CollUtils.isEmpty(itemIds)) {
+            return;
+        }
+        List<CartItem> items = cartItemService.lambdaQuery()
+                .in(CartItem::getSkuId, itemIds)
+                .eq(CartItem::getUserId, userId)
+                .list();
+        if (CollUtils.isEmpty(items)) {
+            return;
+        }
+        cartItemService.removeByIds(items.stream().map(CartItem::getId).collect(Collectors.toList()));
+        recalculateCart(items.get(0).getCartId());
     }
 }
