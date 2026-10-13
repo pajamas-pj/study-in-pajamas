@@ -40,4 +40,5 @@ public class UserController {
         return userService.queryUserDetail(loginDTO);
     }
 
+
 }

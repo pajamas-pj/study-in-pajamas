@@ -17,6 +17,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+        <!--pay-api-->
+        <dependency>
+            <groupId>com.pajamas</groupId>
+            <artifactId>pj-pay-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!--common-->
         <dependency>
             <groupId>com.pajamas</groupId>

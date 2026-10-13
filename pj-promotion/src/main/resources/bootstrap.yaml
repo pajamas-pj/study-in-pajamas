@@ -78,12 +78,13 @@ seata:
 feign:
   okhttp:
     enabled: true
+
 pj:
   xxl-job:
     access-token: tianji
     admin:
       address: http://192.168.150.120:8880/xxl-job-admin
     executor:
-      appname: learning-service
+      appname: promotion-service
       log-retention-days: 10
-      logPath: job/learning-service
+      logPath: job/promotion-service

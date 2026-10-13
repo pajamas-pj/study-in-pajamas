@@ -2,7 +2,7 @@ package com.pajamas.trade.service.impl;
 
 import com.pajamas.trade.domain.po.Order;
 import com.pajamas.trade.domain.po.OrderItem;
-import com.pajamas.trade.domain.po.RefundOrder;
+import com.pajamas.trade.domain.po.RefundApply;
 import com.pajamas.trade.domain.vo.OrderProgressNodeVO;
 import com.pajamas.trade.enums.OrderStatus;
 import com.pajamas.trade.enums.RefundStatus;
@@ -36,7 +36,7 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemMapper, OrderItem
     }
 
     @Override
-    public List<OrderProgressNodeVO> packageProgressNodes(Order order, RefundOrder refundOrder) {
+    public List<OrderProgressNodeVO> packageProgressNodes(Order order, RefundApply refundApply) {
         // 1.先填充订单交易的每个节点的时间值
         List<OrderProgressNodeVO> list = new ArrayList<>();
         // 1.1.下单时间
@@ -47,17 +47,17 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemMapper, OrderItem
         list.add(new OrderProgressNodeVO(OrderStatus.CLOSED.getProgressName(), order.getCloseTime()));
         // 1.4.交易完成时间
         list.add(new OrderProgressNodeVO(FINISHED.getProgressName(), order.getFinishTime()));
-        if (refundOrder != null) {
+        if (refundApply != null) {
             // 1.5.没有退款参数情况下，默认是用户端查询，添加退款成功时间字段
-            list.add(new OrderProgressNodeVO(OrderStatus.REFUNDED.getProgressName(), refundOrder.getCreateTime()));
+            list.add(new OrderProgressNodeVO(OrderStatus.REFUNDED.getProgressName(), refundApply.getCreateTime()));
             // 2.再填充订单退款的每个节点的时间值
             // 2.1.订单申请退款
-            list.add(new OrderProgressNodeVO(RefundStatus.UN_APPROVE.getProgressName(), refundOrder.getCreateTime()));
+            list.add(new OrderProgressNodeVO(RefundStatus.UN_APPROVE.getProgressName(), refundApply.getCreateTime()));
             // 2.2.订单审批时间（审批成功或失败）
-            list.add(new OrderProgressNodeVO(RefundStatus.AGREE.getProgressName(), refundOrder.getAuditTime()));
+            list.add(new OrderProgressNodeVO(RefundStatus.AGREE.getProgressName(), refundApply.getApproveTime()));
             // 2.3.退款结束时间（学员取消、退款成功、退款关闭）
-            RefundStatus status = RefundStatus.of(refundOrder.getRefundStatus());
-            list.add(new OrderProgressNodeVO(status.getProgressName(), refundOrder.getFinishTime()));
+            RefundStatus status = RefundStatus.of(refundApply.getStatus().getValue());
+            list.add(new OrderProgressNodeVO(status.getProgressName(), refundApply.getFinishTime()));
         }
         // 3.然后过滤掉没有时间的节点，再按照时间进行排序，升序
         return list.stream()

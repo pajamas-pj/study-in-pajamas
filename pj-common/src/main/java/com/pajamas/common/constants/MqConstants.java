@@ -46,7 +46,7 @@ public interface MqConstants {
         String ORDER_LOG_KEY = "order.log";
         String ORDER_STATUS_KEY = "order.status";
         String ORDER_REFUND_KEY = "order.refund";
-
+        String ORDER_CLOSED = "order.close";
         /*积分相关RoutingKey*/
         /* 写回答 */
         String WRITE_REPLY = "reply.new";
@@ -76,7 +76,6 @@ public interface MqConstants {
         /*支付有关的key*/
         String PAY_SUCCESS = "pay.success";
         String REFUND_CHANGE = "refund.status.change";
-
         String ORDER_DELAY_KEY = "delay.order.query";
 
         /*领取优惠券的key*/

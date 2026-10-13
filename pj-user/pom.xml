@@ -30,6 +30,12 @@
             <artifactId>pj-api</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!--pay-api-->
+        <dependency>
+            <groupId>com.pajamas</groupId>
+            <artifactId>pj-pay-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!--web-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

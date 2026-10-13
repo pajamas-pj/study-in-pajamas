@@ -1,7 +1,6 @@
 package com.pajamas.api.client.user;
 
 
-
 import com.pajamas.api.client.user.fallback.UserClientFallback;
 import com.pajamas.api.dto.user.LoginFormDTO;
 import com.pajamas.api.dto.user.LoginUserDTO;
@@ -63,4 +62,10 @@ public interface UserClient {
      */
     @GetMapping("/users/{id}")
     UserDTO queryUserById(@PathVariable("id") Long id);
+
+    /**
+     * 查询根据wx.login的code用户openId
+     */
+    @GetMapping("/wx")
+    String queryWxMiniOpenIdByUserId(Long userId);
 }

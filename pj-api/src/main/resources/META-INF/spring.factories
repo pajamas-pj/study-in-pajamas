@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.pajamas.api.config.DefaultFeignConfig, \
+  com.pajamas.api.config.FallbackConfig,

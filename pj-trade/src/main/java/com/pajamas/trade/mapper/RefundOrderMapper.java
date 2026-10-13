@@ -1,6 +1,5 @@
 package com.pajamas.trade.mapper;
 
-import com.pajamas.trade.domain.po.RefundOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

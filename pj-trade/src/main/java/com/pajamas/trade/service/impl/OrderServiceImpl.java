@@ -23,7 +23,7 @@ import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.UserContext;
 import com.pajamas.trade.config.TradeProperties;
-import com.pajamas.trade.domain.po.RefundOrder;
+import com.pajamas.trade.domain.po.RefundApply;
 import com.pajamas.trade.domain.vo.*;
 import com.pajamas.trade.enums.OrderStatus;
 import com.pajamas.trade.constants.TradeErrorInfo;
@@ -37,7 +37,7 @@ import com.pajamas.trade.enums.RefundStatus;
 import com.pajamas.trade.mapper.OrderMapper;
 import com.pajamas.trade.service.IOrderItemService;
 import com.pajamas.trade.service.IOrderService;
-import com.pajamas.trade.service.IRefundOrderService;
+import com.pajamas.trade.service.IRefundApplyService;
 import com.pajamas.trade.utils.IdempotentHelper;
 import com.pajamas.trade.utils.RedisIdWorker;
 import io.seata.spring.annotation.GlobalTransactional;
@@ -63,7 +63,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private final StockDeductListClient stockDeductListClient;
 
     private final IOrderItemService orderItemService;
-    private final IRefundOrderService refundOrderService;
+    private final IRefundApplyService refundApplyService;
     private final TradeProperties tradeProperties;
     private final RedisIdWorker redisIdWorker;
     private final IdempotentHelper idempotentHelper;
@@ -265,8 +265,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         ));
         vo.setDetails(dvs);
         // 3.3.订单进度
-        RefundOrder refundOrder = refundOrderService.getById(id);
-        vo.setProgressNodes(orderItemService.packageProgressNodes(order, refundOrder));
+        RefundApply refundApply = refundApplyService.getById(id);
+        vo.setProgressNodes(orderItemService.packageProgressNodes(order, refundApply));
         // 3.4.优惠明细
         List<String> rules = promotionClient.queryDiscountRules(order.getCouponIds());
         vo.setCouponDesc(String.join("/", rules));
