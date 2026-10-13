@@ -29,7 +29,7 @@ public class UserThirdAccountServiceImpl extends ServiceImpl<UserThirdAccountMap
     public void saveWxOpenId(WxLoginDTO wxLoginDTO) {
         //1.解析code获得openId
         String code = wxLoginDTO.getCode();
-        String openid = payClient.queryOpenIdByCode(code);
+        String openid = payClient.queryWxMiniOpenIdByCode(code);
         //2.保存到数据库
         save(new UserThirdAccount()
                 .setUserId(UserContext.getUser())

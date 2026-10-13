@@ -1,6 +1,6 @@
 package com.pajamas.pay.sdk.constants;
 
-import com.tianji.common.utils.StringUtils;
+import com.pajamas.common.utils.StringUtils;
 import lombok.Getter;
 
 @Getter
