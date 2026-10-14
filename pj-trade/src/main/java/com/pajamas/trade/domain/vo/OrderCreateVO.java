@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @ApiModel(description = "创建订单返回")
 @Builder
 public class OrderCreateVO {
-    @ApiModelProperty("交易流水号")
-    private String orderNo;
     @ApiModelProperty("订单号")
     private Long orderId;
     @ApiModelProperty("支付金额")

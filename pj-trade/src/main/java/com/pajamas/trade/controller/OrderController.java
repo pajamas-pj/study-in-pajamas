@@ -1,5 +1,6 @@
 package com.pajamas.trade.controller;
 
+import com.pajamas.trade.constants.OrderCancelReason;
 import com.pajamas.trade.domain.dto.OrderCreateDTO;
 import com.pajamas.trade.domain.vo.OrderConfirmVO;
 import com.pajamas.trade.domain.vo.OrderCreateVO;
@@ -41,5 +42,10 @@ public class OrderController {
     @GetMapping("/{id}")
     public OrderVO queryOrderById(@ApiParam("订单id")@PathVariable("id") Long id){
         return orderService.queryOrderById(id);
+    }
+    @ApiOperation("取消订单接口")
+    @PutMapping("/{id}/cancel")
+    public void cancelOrder(@ApiParam("要取消订单的id") @PathVariable("id") Long orderId){
+        orderService.cancelOrder(orderId, OrderCancelReason.USER_CANCEL);
     }
 }

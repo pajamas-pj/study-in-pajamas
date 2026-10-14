@@ -1,6 +1,5 @@
 package com.pajamas.trade.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pajamas.api.client.course.CourseClient;
 import com.pajamas.api.client.promotion.CouponTccClient;
@@ -14,6 +13,7 @@ import com.pajamas.api.dto.promotion.OrderCouponDTO;
 import com.pajamas.api.dto.promotion.OrderCourseDTO;
 import com.pajamas.api.dto.stock.StockDeductListFormDTO;
 import com.pajamas.api.dto.stock.StockItemDTO;
+import com.pajamas.api.dto.trade.OrderBasicDTO;
 import com.pajamas.common.config.mq.RabbitMqHelper;
 import com.pajamas.common.constants.MqConstants;
 import com.pajamas.common.exceptions.BadRequestException;
@@ -22,10 +22,9 @@ import com.pajamas.common.exceptions.DbException;
 import com.pajamas.common.utils.BeanUtils;
 import com.pajamas.common.utils.CollUtils;
 import com.pajamas.common.utils.UserContext;
+import com.pajamas.pay.sdk.dto.PayResultDTO;
 import com.pajamas.trade.config.TradeProperties;
-import com.pajamas.trade.domain.po.RefundApply;
-import com.pajamas.trade.domain.vo.*;
-import com.pajamas.trade.enums.OrderStatus;
+import com.pajamas.trade.constants.OrderCancelReason;
 import com.pajamas.trade.constants.TradeErrorInfo;
 import com.pajamas.trade.domain.dto.CartUserDTO;
 import com.pajamas.trade.domain.dto.OrderCreateDTO;
@@ -33,6 +32,9 @@ import com.pajamas.trade.domain.dto.OrderItemDTO;
 import com.pajamas.trade.domain.po.Order;
 import com.pajamas.trade.domain.po.OrderItem;
 import com.pajamas.trade.domain.po.OrderLog;
+import com.pajamas.trade.domain.po.RefundApply;
+import com.pajamas.trade.domain.vo.*;
+import com.pajamas.trade.enums.OrderStatus;
 import com.pajamas.trade.enums.RefundStatus;
 import com.pajamas.trade.mapper.OrderMapper;
 import com.pajamas.trade.service.IOrderItemService;
@@ -44,12 +46,14 @@ import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.pajamas.trade.constants.TradeErrorInfo.ORDER_ALREADY_FINISH;
 import static com.pajamas.trade.constants.TradeErrorInfo.ORDER_NOT_EXISTS;
 
 @Slf4j
@@ -77,8 +81,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!result) {
             throw new BizIllegalException("订单已提交，请勿重复操作");
         }
-        //1.1生成交易流水号
-        String orderNo = String.valueOf(redisIdWorker.nextId("order"));
+        //1.1生成业务订单号
+        Long orderId = redisIdWorker.nextId("order");
         //1.2订单关闭时间
         LocalDateTime expireTime = LocalDateTime.now().plusMinutes(tradeProperties.getPayOrderTTLMinutes());
         //2.查询商品费用信息
@@ -94,7 +98,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         List<StockItemDTO> stockItems = BeanUtils.copyList(items, StockItemDTO.class);
         StockDeductListFormDTO formDTO = new StockDeductListFormDTO();
         formDTO.setItems(stockItems);
-        formDTO.setOrderNo(orderNo);
+        formDTO.setOrderNo(orderId.toString());
         formDTO.setExpireTime(expireTime);
         boolean isTCC = stockDeductListClient.batchTry(formDTO);
         if (!isTCC) {
@@ -103,7 +107,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //4.TCC用户券冻结
         CouponTccFormDTO couponTccFormDTO = new CouponTccFormDTO();
         couponTccFormDTO.setUserCouponIds(orderCreateDTO.getCouponIds());
-        couponTccFormDTO.setOrderNo(orderNo);
+        couponTccFormDTO.setOrderNo(orderId.toString());
         boolean isCoupon = couponTccClient.batchTry(couponTccFormDTO);
         if (!isCoupon) {
             throw new BizIllegalException("优惠券无效");
@@ -134,9 +138,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setPayAmount(payAmount);
         order.setOrderStatus(OrderStatus.NO_PAY);
         order.setRemark(OrderStatus.NO_PAY.getProgressName());
-        // 5.4. 流水号 订单号
-        order.setOrderNo(orderNo);
-        long orderId = IdWorker.getId();
+        // 5.4订单号
         order.setId(orderId);
         // 6.封装订单详情
         List<OrderItem> orderItems = new ArrayList<>(courseInfos.size());
@@ -162,7 +164,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 10.构建下单结果
         return OrderCreateVO.builder()
                 .orderId(orderId)
-                .orderNo(orderNo)
                 .payAmount(payAmount)
                 .status(order.getOrderStatus())
                 .payOutTime(LocalDateTime.now().plusMinutes(tradeProperties.getPayOrderTTLMinutes()))
@@ -272,6 +273,75 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         vo.setCouponDesc(String.join("/", rules));
         return vo;
     }
+
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId, OrderCancelReason cancelReason) {
+        Long userId = UserContext.getUser();
+        // 1.查询订单
+        Order order = getById(orderId);
+        if (order == null || !userId.equals(order.getUserId())) {
+            throw new BadRequestException(ORDER_NOT_EXISTS);
+        }
+        // 2.判断订单状态是否已经取消，幂等判断
+        if(OrderStatus.CLOSED == order.getOrderStatus()){
+            // 订单已经取消，无需重复操作
+            return;
+        }
+        // 3.判断订单是否未支付，只有未支付订单才可以取消
+        if(OrderStatus.NO_PAY != order.getOrderStatus()){
+            throw new BizIllegalException(ORDER_ALREADY_FINISH);
+        }
+        // 4.可以更新订单状态为取消了
+        boolean success = lambdaUpdate()
+                .set(Order::getOrderStatus, OrderStatus.CLOSED.getValue())
+                .set(Order::getRemark, cancelReason.getMsg())
+                .set(Order::getCloseTime, LocalDateTime.now())
+                .eq(Order::getOrderStatus, OrderStatus.NO_PAY.getValue())
+                .eq(Order::getId, orderId)
+                .update();
+        if (!success) {
+            return;
+        }
+        // 5.更新订单条目的状态
+        orderItemService.updateStatusByOrderId(orderId, OrderStatus.CLOSED);
+
+        // 6.退还优惠券
+        promotionClient.refundCoupon(order.getCouponIds());
+    }
+
+    @Override
+    @Transactional
+    public void handlePaySuccess(PayResultDTO payResult) {
+        // 1.查询订单
+        Order order = getById(payResult.getBizOrderId());
+        if (order == null) {
+            return;
+        }
+        // 2.更新订单状态
+        Order o = new Order();
+        o.setId(order.getId());
+        o.setOrderStatus(OrderStatus.PAYED);
+        o.setPayTime(payResult.getSuccessTime());
+        o.setPayChannel(payResult.getPayChannel());
+        o.setOrderNo(payResult.getPayOrderNo());
+        o.setRemark("用户支付成功");
+        updateById(o);
+        // 3.更新订单条目
+        orderItemService.markDetailSuccessByOrderId(o.getId(), payResult.getPayChannel(), payResult.getSuccessTime());
+        // 4.查询订单包含的课程信息
+        List<Long> cIds = orderItemService.queryCourseIdsByOrderId(o.getId());
+        // 5.发送MQ消息，通知报名成功
+        mqHelper.send(
+                MqConstants.Exchange.ORDER_EXCHANGE,
+                MqConstants.Key.ORDER_PAY_KEY,
+                OrderBasicDTO.builder()
+                        .orderId(o.getId()).userId(order.getUserId()).courseIds(cIds)
+                        .finishTime(o.getPayTime())
+                        .build()
+        );
+    }
+
 
     @Override
     public String getIdempotentToken() {

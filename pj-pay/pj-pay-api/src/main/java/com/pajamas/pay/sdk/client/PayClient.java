@@ -57,4 +57,13 @@ public interface PayClient {
      */
     @GetMapping("/openId")
     String queryWxMiniOpenIdByCode(@RequestParam("code")String code);
+
+
+    /**
+     * 小程序申请预支付，返回prepay_id预支付交易id，用于小程序前端调支付
+     * @param payApplyDTO 订单支付体
+     * @return package
+     */
+    @PostMapping("/wxMini/prepay")
+    WxMiniPrepayDTO applyWxMiniPayOrder(@RequestBody PayApplyDTO payApplyDTO);
 }

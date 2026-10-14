@@ -1,5 +1,7 @@
 package com.pajamas.trade.service.impl;
 
+import cn.hutool.db.DbRuntimeException;
+import com.pajamas.common.constants.ErrorInfo;
 import com.pajamas.trade.domain.po.Order;
 import com.pajamas.trade.domain.po.OrderItem;
 import com.pajamas.trade.domain.po.RefundApply;
@@ -10,7 +12,9 @@ import com.pajamas.trade.mapper.OrderItemMapper;
 import com.pajamas.trade.service.IOrderItemService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -64,5 +68,33 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemMapper, OrderItem
                 .filter(nodeVO -> nodeVO.getTime() != null)
                 .sorted(Comparator.comparing(OrderProgressNodeVO::getTime))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updateStatusByOrderId(Long orderId, OrderStatus status) {
+        boolean success = lambdaUpdate()
+                .set(OrderItem::getItemStatus, status)
+                .eq(OrderItem::getOrderId, orderId)
+                .update();
+        if (!success) {
+            throw new DbRuntimeException(ErrorInfo.Msg.DB_UPDATE_EXCEPTION);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void markDetailSuccessByOrderId(Long id, String payChannel, LocalDateTime successTime) {
+        List<OrderItem> details = queryByOrderId(id);
+        for (OrderItem detail : details) {
+            detail.setItemStatus(PAYED);
+            detail.setPayChannel(payChannel);
+            detail.setCourseExpireTime(successTime.plusMinutes(detail.getValidDuration()));
+        }
+        updateBatchById(details);
+    }
+
+    public List<Long> queryCourseIdsByOrderId(Long orderId) {
+        return baseMapper.queryCourseIdsByOrderId(orderId);
     }
 }
