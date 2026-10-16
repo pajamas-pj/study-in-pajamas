@@ -16,9 +16,9 @@ spring:
   rabbitmq:
     host: 192.168.150.120
     port: 5672
-    virtual-host: /hmall
-    username: hmall
-    password: 123
+    virtual-host: /pajamas
+    username: pajamas
+    password: 1234
     listener:
       simple:
         prefetch: 1

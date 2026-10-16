@@ -108,6 +108,12 @@
             <groupId>com.alibaba.cola</groupId>
             <artifactId>cola-component-statemachine</artifactId>
         </dependency>
+        <!--redisson-->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

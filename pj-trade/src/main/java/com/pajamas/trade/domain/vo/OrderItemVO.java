@@ -21,7 +21,7 @@ public class OrderItemVO {
     @ApiModelProperty("课程价格")
     private Integer price;
     @ApiModelProperty("实付金额")
-    private Integer payPayAmount;
+    private Integer payAmount;
     @ApiModelProperty("退款状态")
     private RefundStatus refundStatus;
     @ApiModelProperty("优惠券规则")

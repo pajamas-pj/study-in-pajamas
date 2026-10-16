@@ -79,6 +79,7 @@ seata:
 feign:
   okhttp:
     enabled: true
+
 pj:
   xxl-job:
     access-token: tianji

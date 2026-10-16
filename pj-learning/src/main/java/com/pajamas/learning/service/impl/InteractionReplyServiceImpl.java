@@ -13,6 +13,7 @@ import com.pajamas.learning.domain.po.InteractionReply;
 import com.pajamas.learning.domain.query.ReplyPageQuery;
 import com.pajamas.learning.domain.vo.ReplyVO;
 import com.pajamas.learning.enums.QuestionStatus;
+import com.pajamas.learning.mapper.InteractionQuestionMapper;
 import com.pajamas.learning.mapper.InteractionReplyMapper;
 import com.pajamas.learning.service.IInteractionQuestionService;
 import com.pajamas.learning.service.IInteractionReplyService;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class InteractionReplyServiceImpl extends ServiceImpl<InteractionReplyMapper, InteractionReply> implements IInteractionReplyService {
-    private final IInteractionQuestionService questionService;
+    private final InteractionQuestionMapper interactionQuestionMapper;
     private final UserClient userClient;
     @Override
     public void saveReply(ReplyDTO replyDTO) {
@@ -47,12 +48,12 @@ public class InteractionReplyServiceImpl extends ServiceImpl<InteractionReplyMap
         //2.查询是否有上级回答，没有则是回答
         Long answerId = reply.getAnswerId();
         Long questionId = reply.getQuestionId();
-        InteractionQuestion question =questionService.getById(questionId);
+        InteractionQuestion question = interactionQuestionMapper.selectById(questionId);
         if(answerId == null) {
             //2.1.是回答，修改问题的最近一次回答和回答数量
             question.setLatestAnswerId(reply.getId());
             question.setAnswerTimes(question.getAnswerTimes() + 1);
-            questionService.updateById(question);
+            interactionQuestionMapper.updateById(question);
         }else {
             //2.2.是评论，更新回答下评论数量
             InteractionReply rep = getById(reply.getId());
@@ -62,7 +63,7 @@ public class InteractionReplyServiceImpl extends ServiceImpl<InteractionReplyMap
         //2.3如果是学生回答，修改问题的状态
         if(replyDTO.getIsStudent()) {
             question.setStatus(QuestionStatus.UN_CHECK);
-            questionService.updateById(question);
+            interactionQuestionMapper.updateById(question);
         }
         //3.保存数据
         save(reply);
