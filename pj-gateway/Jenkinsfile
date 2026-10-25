@@ -9,6 +9,13 @@ pipeline {
     environment {
         MAVEN_OPTS = '-Xmx1024m'
         APP_NAME = 'pj-gateway'
+        IMAGE_VERSION = "${BUILD_NUMBER}"
+        // 阿里云 ACR 配置
+        ACR_REGISTRY = 'crpi-acs8tzfyl1yty8iw.cn-hangzhou.personal.cr.aliyuncs.com'
+        ACR_NAMESPACE = 'study-in-pj'
+        ACR_REPO = "${ACR_REGISTRY}/${ACR_NAMESPACE}/${APP_NAME}"
+        ACR_USER = 'aliyun8665615964'
+        ACR_PASS = '@LiPengJie206714'
     }
 
     options {
@@ -39,59 +46,60 @@ pipeline {
             }
         }
 
-        stage('deploy') {
+        stage('build & push Image') {
+            steps {
+                // 在本地 Jenkins 构建镜像
+                dir("${APP_NAME}") {
+                    echo "1. 构建 Docker 镜像..."
+                    // 此时用的是你本地电脑的 Docker 引擎
+                    sh "docker build -t ${ACR_REPO}:${IMAGE_VERSION} ."
+
+                    echo "2. 登录阿里云镜像仓库..."
+                    sh "docker login -u ${ACR_USER} -p ${ACR_PASS} ${ACR_REGISTRY}"
+
+                    echo "3. 推送镜像到阿里云..."
+                    sh "docker push ${ACR_REPO}:${IMAGE_VERSION}"
+                    echo " 同时给它打个 latest 标签，方便以后直接拉取"
+                    sh "docker tag ${ACR_REPO}:${IMAGE_VERSION} ${ACR_REPO}:latest"
+                    sh "docker push ${ACR_REPO}:latest"
+                }
+            }
+        }
+
+        stage('deploy remote') {
             steps {
                 script {
                     def remoteHost = 'root@118.178.172.169'
-                    // 每个服务独立一个目录
-                    def deployPath = "/opt/developments/${APP_NAME}"
-                    def jarFile = "${APP_NAME}.jar"
-                    // 动态版本号，例如：pj-gateway:15
-                    def imageVersion = "${BUILD_NUMBER}"
-
                     sh """
-                        echo '正在上传 ${jarFile}...'
-
-                        # 1. 确保远程专属目录存在
-                        ssh ${remoteHost} "mkdir -p ${deployPath}"
-
-                        # 2. 上传 JAR 包
-                        scp -O ${APP_NAME}/target/${jarFile} ${remoteHost}:${deployPath}/
-
-                        # 3. 上传 Dockerfile
-                        scp -O ${APP_NAME}/Dockerfile ${remoteHost}:${deployPath}/
-
-                        echo '正在远程通过 Docker 部署...'
-
-                        # 4. 远程执行 Docker 替换命令
+                        echo '正在通知远程服务器拉取镜像并重启...'
+                        // 这里是唯一跨网络的一步，通过 SSH 让远端服务器执行指令
                         ssh -T ${remoteHost} << 'ENDSSH'
 set -e
-DEPLOY_PATH="${deployPath}"
 APP_NAME="${APP_NAME}"
-IMAGE_VERSION="${imageVersion}"
+IMAGE_VERSION="${IMAGE_VERSION}"
+ACR_REGISTRY="${ACR_REGISTRY}"
+ACR_REPO="${ACR_REPO}"
+ACR_USER="${ACR_USER}"
+ACR_PASS="${ACR_PASS}"
 
-echo "进入目录 \$DEPLOY_PATH"
-cd \$DEPLOY_PATH
+echo "1. 登录仓库..."
+docker login -u \$ACR_USER -p "\$ACR_PASS" \$ACR_REGISTRY
 
-echo "1. 开始构建 Docker 镜像..."
-echo " 构建指定版本的镜像：\$APP_NAME:\$IMAGE_VERSION"
-docker build -t \$APP_NAME:\$IMAGE_VERSION .
-echo " 同时给它打个 latest 标签，方便以后直接拉取"
-docker tag \$APP_NAME:\$IMAGE_VERSION \$APP_NAME:latest
+echo "2. 拉取最新镜像..."
+docker pull \$ACR_REPO:\$IMAGE_VERSION
 
-echo "2. 停止并删除旧容器..."
+echo "3. 停止并删除旧容器..."
 docker stop \$APP_NAME || true
 docker rm \$APP_NAME || true
 
-echo "3. 使用新镜像启动容器..."
-# 这里加上了时区设置 -e TZ=Asia/Shanghai
+echo "4. 启动新容器..."
 docker run -d \
   --name \$APP_NAME \
   --restart always \
   --network pajamas \
   -e TZ=Asia/Shanghai \
   -p 10010:10010 \
-  \$APP_NAME:\$IMAGE_VERSION
+  \$ACR_REPO:\$IMAGE_VERSION
 
 echo "镜像化部署成功！"
 ENDSSH
