@@ -8,6 +8,12 @@ spring:
   application:
     name: gateway-service
   cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        shared-configs: # 共享配置
+          - data-id: shared-logs.yaml # 共享日志配置
+            refresh: false
     gateway:
       routes:
         - id: user-service
@@ -47,14 +53,6 @@ spring:
             - Path=/ps/**
           filters:
             - StripPrefix=1
-logging:
-  level:
-    com.pajamas: debug
-  pattern:
-    dateformat: HH:mm:ss:SSS
-  file:
-    path: "logs/${spring.application.name}"
-
 pj:
   jwt:
     location: classpath:pj.jks

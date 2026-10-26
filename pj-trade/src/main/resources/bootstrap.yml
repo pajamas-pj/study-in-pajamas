@@ -1,0 +1,48 @@
+server:
+  port: 8084  #端口
+  tomcat:
+    uri-encoding: UTF-8   #服务编码
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: trade-service
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        shared-configs: # 共享配置
+          - data-id: shared-jdbc.yaml # 共享jdbc配置
+            refresh: false
+          - data-id: shared-redis.yaml # 共享redis配置
+            refresh: false
+          - data-id: shared-logs.yaml # 共享日志配置
+            refresh: false
+          - data-id: shared-feign.yaml # 共享feign配置
+            refresh: false
+          - data-id: shared-mq.yaml # 共享mq配置
+            refresh: false
+          - data-id: shared-xxljob.yaml # 共享mq配置
+            refresh: false
+          - data-id: shared-seata.yaml # 共享seata配置
+            refresh: false
+
+pj:
+  db:
+    database: pj_trade
+
+knife4j:
+  enable: true
+  openapi:
+    title: 被窝学堂交易接口文档
+    description: 被窝学堂交易接口文档
+    email: pj995995995@163.com
+    concat: lipengjie
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.pajamas.trade.controller

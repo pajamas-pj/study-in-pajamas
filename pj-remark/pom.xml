@@ -75,22 +75,10 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
-        <!--seata-->
+        <!--mq-->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
-        </dependency>
-        <!--AMQP依赖-->
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-amqp</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!--Spring整合Rabbit依赖-->
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-            <scope>provided</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
     </dependencies>
     <build>
