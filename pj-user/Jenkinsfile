@@ -63,6 +63,10 @@ pipeline {
                     echo " 同时给它打个 latest 标签，方便以后直接拉取"
                     sh "docker tag ${ACR_REPO}:${IMAGE_VERSION} ${ACR_REPO}:latest"
                     sh "docker push ${ACR_REPO}:latest"
+
+                    echo "4. 清理本地镜像（释放磁盘空间）..."
+                    // 👇 关键新增：既然推送成功了，本地的镜像就删掉！因为最终部署是去阿里云拉取！
+                    sh "docker rmi ${ACR_REPO}:${IMAGE_VERSION} ${ACR_REPO}:latest || true"
                 }
             }
         }
@@ -113,7 +117,7 @@ docker run -d \
   --restart always \
   --network pajamas \
   -e TZ=Asia/Shanghai \
-  -p \$APP_PORT:\$APP_PORT \\
+  -p \$APP_PORT:\$APP_PORT \
   \$ACR_REPO:\$IMAGE_VERSION
 
 echo "5. 清理未被使用的旧镜像（释放磁盘空间）..."

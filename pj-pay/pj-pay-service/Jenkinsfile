@@ -63,6 +63,10 @@ pipeline {
                     sh "docker push ${ACR_REPO}:${IMAGE_VERSION}"
                     sh "docker tag ${ACR_REPO}:${IMAGE_VERSION} ${ACR_REPO}:latest"
                     sh "docker push ${ACR_REPO}:latest"
+
+                    echo "4. 清理本地镜像（释放磁盘空间）..."
+                    // 👇 关键新增：既然推送成功了，本地的镜像就删掉！因为最终部署是去阿里云拉取！
+                    sh "docker rmi ${ACR_REPO}:${IMAGE_VERSION} ${ACR_REPO}:latest || true"
                 }
             }
         }
