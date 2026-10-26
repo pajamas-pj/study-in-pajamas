@@ -27,7 +27,7 @@ pipeline {
         stage('checkout') {
             steps {
                 echo '拉取最新代码...'
-                git url: 'git@github.com:pajamas-pj/study-in-pajamas.git', branch: 'master', depth: 1
+                git url: 'git@github.com:pajamas-pj/study-in-pajamas.git', branch: 'master'
             }
         }
 
