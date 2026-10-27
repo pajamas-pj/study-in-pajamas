@@ -117,7 +117,6 @@ docker run -d \\
   --restart always \\
   --network pajamas \\
   -e TZ=Asia/Shanghai \\
-  -p \$APP_PORT:\$APP_PORT \\
   \$ACR_REPO:\$IMAGE_VERSION
 
 echo "5. 清理未被使用的旧镜像（释放磁盘空间）..."

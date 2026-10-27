@@ -76,13 +76,12 @@ docker stop \$APP_NAME || true
 docker rm \$APP_NAME || true
 
 echo "3. 启动新服务..."
-docker run -d \\
-  --name \$APP_NAME \\
-  --restart always \\
-  --network pajamas \\
-  -e TZ=Asia/Shanghai \\
-  -e SERVER_PORT=\$APP_PORT \\
-  -p \$APP_PORT:\$APP_PORT \\
+docker run -d \
+  --name \$APP_NAME \
+  --restart always \
+  --network pajamas \
+  -e TZ=Asia/Shanghai \
+  -p \$APP_PORT:\$APP_PORT \
   \$APP_NAME:latest
 
 echo "4. 清理无用缓存..."
