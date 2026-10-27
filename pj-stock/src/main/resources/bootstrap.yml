@@ -27,9 +27,9 @@ spring:
             refresh: false
           - data-id: shared-seata.yaml # 共享seata配置
             refresh: false
-  pj:
-    db:
-      database: pj_stock
+pj:
+  db:
+    database: pj_stock
 
 knife4j:
   enable: true
