@@ -13,6 +13,7 @@ import com.pajamas.remark.domain.po.LikedRecord;
 import com.pajamas.remark.mapper.LikedRecordMapper;
 import com.pajamas.remark.service.ILikedRecordService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -36,6 +37,7 @@ import static com.pajamas.common.constants.MqConstants.Key.LIKED_TIMES_KEY_TEMPL
  */
 @Service
 @RequiredArgsConstructor
+@Primary
 public class LikedRecordServiceRedisImpl extends ServiceImpl<LikedRecordMapper, LikedRecord> implements ILikedRecordService {
 
     private final RabbitMqHelper mqHelper;
