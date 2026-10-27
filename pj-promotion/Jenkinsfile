@@ -76,7 +76,7 @@ docker stop \$APP_NAME || true
 docker rm \$APP_NAME || true
 
 echo "3. 启动新服务..."
-docker run -d \
+docker run -d \\
   --name \$APP_NAME \\
   --restart always \\
   --network pajamas \\
