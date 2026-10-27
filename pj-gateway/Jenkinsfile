@@ -10,120 +10,83 @@ pipeline {
         MAVEN_OPTS = '-Xmx1024m'
         APP_NAME = 'pj-gateway'
         APP_PORT = '10010'
-        IMAGE_VERSION = "${BUILD_NUMBER}"
-        // 阿里云 ACR 配置
-        ACR_REGISTRY = 'crpi-acs8tzfyl1yty8iw.cn-hangzhou.personal.cr.aliyuncs.com'
-        ACR_NAMESPACE = 'study-in-pj'
-        ACR_REPO = "${ACR_REGISTRY}/${ACR_NAMESPACE}/${APP_NAME}"
-        ACR_USER = 'aliyun8665615964'
-        ACR_PASS = '@LiPengJie206714'
+        REMOTE_HOST = 'root@118.178.172.169'
+        REMOTE_DIR = '/opt/developments'
     }
 
     options {
         timeout(time: 20, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '3'))
     }
 
     stages {
         stage('checkout') {
             steps {
-                echo '拉取最新代码...'
+                echo '拉取代码...'
                 git url: 'git@github.com:pajamas-pj/study-in-pajamas.git', branch: 'master'
             }
         }
 
         stage('build') {
             steps {
-                echo "开始构建 ${APP_NAME} 模块..."
-                sh "mvn clean package -pl ${APP_NAME} -am -DskipTests"
-            }
-            post {
-                success {
-                    echo "${APP_NAME} 模块打包成功！"
-                    archiveArtifacts artifacts: "${APP_NAME}/target/*.jar", allowEmptyArchive: true
-                }
-                failure {
-                    echo "${APP_NAME} 模块打包失败，请查日志！"
-                }
+                echo "开始构建 ${APP_NAME} ..."
+                sh "mvn clean package -pl ${APP_NAME} -am -T 1C -Dmaven.test.skip=true -nsu"
             }
         }
 
-        stage('build & push Image') {
-            steps {
-                // 在本地 Jenkins 构建镜像
-                dir("${APP_NAME}") {
-                    echo "1. 构建 Docker 镜像..."
-                    // 此时用的是你本地电脑的 Docker 引擎
-                    sh "docker build -t ${ACR_REPO}:${IMAGE_VERSION} ."
-
-                    echo "2. 登录阿里云镜像仓库..."
-                    sh "docker login -u ${ACR_USER} -p ${ACR_PASS} ${ACR_REGISTRY}"
-
-                    echo "3. 推送镜像到阿里云..."
-                    sh "docker push ${ACR_REPO}:${IMAGE_VERSION}"
-                    echo " 同时给它打个 latest 标签，方便以后直接拉取"
-                    sh "docker tag ${ACR_REPO}:${IMAGE_VERSION} ${ACR_REPO}:latest"
-                    sh "docker push ${ACR_REPO}:latest"
-
-                    echo "4. 清理本地镜像（释放磁盘空间）..."
-                    // 👇 关键新增：既然推送成功了，本地的镜像就删掉！因为最终部署是去阿里云拉取！
-                    sh "docker rmi ${ACR_REPO}:${IMAGE_VERSION} ${ACR_REPO}:latest || true"
-                }
-            }
-        }
-
-        stage('deploy remote') {
+        stage('Deploy') {
             steps {
                 script {
-                    def appPort = "${APP_PORT}"
+                    def appPort = "${APP_PORT}" // 默认取环境变量里的 10011
                     def ymlFile = "${APP_NAME}/src/main/resources/bootstrap.yml"
+
                     // 检查文件是否存在
                     if (fileExists(ymlFile)) {
                         def config = readYaml file: ymlFile
-                        // 读取 spring.server.port 或 server.port，根据你的 yml 结构自己调整
+                        // 读取 server.port，覆盖默认值
                         if (config.server && config.server.port) {
                             appPort = config.server.port
                         }
                     } else {
                         echo "未找到 ${ymlFile}，使用默认端口 ${appPort}"
                     }
-                    echo "解析到的端口为: ${appPort}"
-                    def remoteHost = 'root@118.178.172.169'
+                    echo "解析到的实际端口为: ${appPort}"
+
+                    // 开始传输文件
+                    echo "开始传输 JAR 包和 Dockerfile 到云端..."
+                    sh "ssh ${REMOTE_HOST} 'mkdir -p ${REMOTE_DIR}/${APP_NAME}'"
+                    sh "scp ${APP_NAME}/target/${APP_NAME}.jar ${REMOTE_HOST}:${REMOTE_DIR}/${APP_NAME}/"
+                    sh "scp ${APP_NAME}/Dockerfile ${REMOTE_HOST}:${REMOTE_DIR}/${APP_NAME}/"
+
+                    echo "开始远端构建镜像并启动..."
                     sh """
-                        echo '正在通知远程服务器拉取镜像并重启...'
-                        # 这里是唯一跨网络的一步，通过 SSH 让远端服务器执行指令
-                        ssh -T ${remoteHost} << 'ENDSSH'
+                        ssh -T ${REMOTE_HOST} << 'ENDSSH'
 set -e
 APP_NAME="${APP_NAME}"
-APP_PORT="${appPort}"
-IMAGE_VERSION="${IMAGE_VERSION}"
-ACR_REGISTRY="${ACR_REGISTRY}"
-ACR_REPO="${ACR_REPO}"
-ACR_USER="${ACR_USER}"
-ACR_PASS="${ACR_PASS}"
+APP_PORT="${appPort}"  // 👈 这里用的是动态读取的端口
+TARGET_DIR="${REMOTE_DIR}/${APP_NAME}"
 
-echo "1. 登录仓库..."
-docker login -u \$ACR_USER -p "\$ACR_PASS" \$ACR_REGISTRY
+cd \$TARGET_DIR
 
-echo "2. 拉取最新镜像..."
-docker pull \$ACR_REPO:\$IMAGE_VERSION
+echo "1. 远端构建镜像..."
+docker build -t \$APP_NAME:latest .
 
-echo "3. 停止并删除旧容器..."
+echo "2. 替换旧容器..."
 docker stop \$APP_NAME || true
 docker rm \$APP_NAME || true
 
-echo "4. 启动新容器..."
+echo "3. 启动新服务..."
 docker run -d \
-  --name \$APP_NAME \
-  --restart always \
-  --network pajamas \
-  -e TZ=Asia/Shanghai \
-  -p \$APP_PORT:\$APP_PORT \
-  \$ACR_REPO:\$IMAGE_VERSION
+  --name \$APP_NAME \\
+  --restart always \\
+  --network pajamas \\
+  -e TZ=Asia/Shanghai \\
+  -e SERVER_PORT=\$APP_PORT \\
+  -p \$APP_PORT:\$APP_PORT \\
+  \$APP_NAME:latest
 
-echo "5. 清理未被使用的旧镜像（释放磁盘空间）..."
+echo "4. 清理无用缓存..."
 docker image prune -f
-
-echo "镜像化部署成功！"
 ENDSSH
                     """
                 }
