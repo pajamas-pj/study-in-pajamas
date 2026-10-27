@@ -2,4 +2,8 @@ FROM eclipse-temurin:11-jre
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY target/pj-course.jar /app.jar
-ENTRYPOINT ["java", "-Xms128m", "-Xmx256m", "-XX:MaxMetaspaceSize=128m", "-jar", "/app.jar"]
+FROM eclipse-temurin:11-jre
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+COPY target/pj-auth.jar /app.jar
+ENTRYPOINT ["java","-server","-Xms256m","-Xmx256m","-Xss256k","-XX:MaxMetaspaceSize=128m","-XX:MaxDirectMemorySize=32m","-XX:+UseSerialGC","-jar", "/app.jar"]
