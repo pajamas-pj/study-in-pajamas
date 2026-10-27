@@ -32,7 +32,6 @@ pipeline {
         stage('build') {
             steps {
                 echo "开始构建 ${MODULE_PATH} ..."
-                // 👇 构建时使用 MODULE_PATH
                 sh "mvn clean package -pl ${MODULE_PATH} -am -T 1C -Dmaven.test.skip=true -nsu"
             }
         }

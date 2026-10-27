@@ -63,7 +63,7 @@ pipeline {
                         ssh -T ${REMOTE_HOST} << 'ENDSSH'
 set -e
 APP_NAME="${APP_NAME}"
-APP_PORT="${appPort}"  // 👈 这里用的是动态读取的端口
+APP_PORT="${appPort}"
 TARGET_DIR="${REMOTE_DIR}/${APP_NAME}"
 
 cd \$TARGET_DIR
