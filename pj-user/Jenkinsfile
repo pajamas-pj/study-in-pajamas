@@ -1,95 +1,125 @@
 pipeline {
+    // 单机部署，直接跑在 Master 上即可
     agent any
 
     tools {
-        maven 'Maven 3.9.10'
-        jdk 'JDK 11'
+        maven 'Maven 3.9.10'   // 确保在 Jenkins 全局工具配置中已添加
+        jdk 'JDK 11'           // 对应 lts-jdk21 镜像内的 JDK
     }
 
     environment {
-        MAVEN_OPTS = '-Xmx1024m'
         APP_NAME = 'pj-user'
         APP_PORT = '8081'
-        REMOTE_HOST = 'root@118.178.172.169'
-        REMOTE_DIR = '/opt/developments'
+
+        // ACR 配置
+        ACR_REGISTRY = 'crpi-acs8tzfyl1yty8iw-vpc.cn-hangzhou.personal.cr.aliyuncs.com'
+        ACR_NAMESPACE = 'study-in-pj'
+        FULL_IMAGE_NAME = "${ACR_REGISTRY}/${ACR_NAMESPACE}/${APP_NAME}"
+
+        IMAGE_TAG = 'latest'
+        CREDENTIALS_ID = 'aliyun-acr-creds'
+        TARGET_NETWORK = 'pajamas'
     }
 
     options {
-        timeout(time: 20, unit: 'MINUTES')
-        buildDiscarder(logRotator(numToKeepStr: '3'))
+        timeout(time: 15, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '3')) // 保留最近3次日志以便排查
+        disableConcurrentBuilds() // 防止并发构建导致容器冲突（重要！）
     }
 
     stages {
-        stage('checkout') {
+        stage('Checkout') {
             steps {
-                echo '拉取代码...'
-                git url: 'git@github.com:pajamas-pj/study-in-pajamas.git', branch: 'master'
+                echo '📥 拉取最新代码...'
+                git url: 'git@github.com:pajamas-pj/study-in-pajamas.git',
+                    branch: 'master'
             }
         }
 
-        stage('build') {
+        stage('Build & Package JAR') {
             steps {
-                echo "开始构建 ${APP_NAME} ..."
-                sh "mvn clean package -pl ${APP_NAME} -am -T 1C -Dmaven.test.skip=true -nsu"
+                echo "⚙️ Maven 构建..."
+                sh "mvn clean package -pl ${APP_NAME} -am -T 1C -DskipTests"
             }
         }
 
-        stage('Deploy') {
+        stage('Build Docker Image & Push') {
             steps {
                 script {
-                    def appPort = "${APP_PORT}" // 默认取环境变量里的 10011
-                    def ymlFile = "${APP_NAME}/src/main/resources/bootstrap.yml"
-
-                    // 检查文件是否存在
-                    if (fileExists(ymlFile)) {
-                        def config = readYaml file: ymlFile
-                        // 读取 server.port，覆盖默认值
-                        if (config.server && config.server.port) {
-                            appPort = config.server.port
+                    dir("${APP_NAME}") {
+                        // 1. 登录 ACR
+                        withCredentials([usernamePassword(credentialsId: env.CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                            sh '''
+                                set -e
+                                echo "$DOCKER_PASS" | docker login --username="$DOCKER_USER" --password-stdin "${ACR_REGISTRY}"
+                            '''
                         }
-                    } else {
-                        echo "未找到 ${ymlFile}，使用默认端口 ${appPort}"
+
+                        // 2. 构建镜像 (打上 latest 标签)
+                        echo "🐳 构建 Docker 镜像: ${FULL_IMAGE_NAME}:latest"
+                        sh "docker build -t ${FULL_IMAGE_NAME}:latest ."                        // 3. 推送到阿里云
+                        echo "🚀 推送 latest 到 ACR..."
+                        sh "docker push ${FULL_IMAGE_NAME}:latest"
+
+                        // 4. 登出并清理本地缓存的 Auth (可选，为了安全)
+                        sh "docker logout ${ACR_REGISTRY}"
                     }
-                    echo "解析到的实际端口为: ${appPort}"
+                }
+            }
+        }
 
-                    // 开始传输文件
-                    echo "开始传输 JAR 包和 Dockerfile 到云端..."
-                    sh "ssh ${REMOTE_HOST} 'mkdir -p ${REMOTE_DIR}/${APP_NAME}'"
-                    sh "scp ${APP_NAME}/target/${APP_NAME}.jar ${REMOTE_HOST}:${REMOTE_DIR}/${APP_NAME}/"
-                    sh "scp ${APP_NAME}/Dockerfile ${REMOTE_HOST}:${REMOTE_DIR}/${APP_NAME}/"
-
-                    echo "开始远端构建镜像并启动..."
+        stage('Deploy to Local Server') {
+            steps {
+                script {
+                    echo "🚢 正在使用【本地已构建镜像】部署到本机..."
                     sh """
-                        ssh -T ${REMOTE_HOST} << 'ENDSSH'
-set -e
-APP_NAME="${APP_NAME}"
-APP_PORT="${appPort}"
-TARGET_DIR="${REMOTE_DIR}/${APP_NAME}"
+                        set -e
 
-cd \$TARGET_DIR
+                        # 1. 停止并删除旧容器 (如果存在)
+                        echo ">>> 停止旧容器 ${APP_NAME}..."
+                        docker stop ${APP_NAME} || true
+                        docker rm ${APP_NAME} || true
 
-echo "1. 远端构建镜像..."
-docker build -t \$APP_NAME:latest .
+                        # 2. 启动新容器
+                        echo ">>> 启动新容器 (使用本地 latest 镜像)..."
+                        docker run -d \\
+                          --name ${APP_NAME} \\
+                          --restart always \\
+                          --network ${TARGET_NETWORK} \\
+                          -p ${APP_PORT}:${APP_PORT} \\
+                          -e TZ=Asia/Shanghai \\
+                          ${FULL_IMAGE_NAME}:latest
 
-echo "2. 替换旧容器..."
-docker stop \$APP_NAME || true
-docker rm \$APP_NAME || true
-
-echo "3. 启动新服务..."
-docker run -d \\
-  --name \$APP_NAME \\
-  --restart always \\
-  --network pajamas \\
-  -e TZ=Asia/Shanghai \\
-  -p \$APP_PORT:\$APP_PORT \\
-  \$APP_NAME:latest
-
-echo "4. 清理无用缓存..."
-docker image prune -f
-ENDSSH
+                        # 3. 简单健康检查
+                        sleep 5
+                        if [ "\$(docker ps -q -f name=${APP_NAME})" ]; then
+                            echo "✅ 容器运行正常!"
+                            docker logs ${APP_NAME} --tail 10
+                        else
+                            echo "❌ 容器启动失败!"
+                            docker logs ${APP_NAME}
+                            exit 1
+                        fi
                     """
                 }
             }
+        }
+
+        stage('Cleanup Unused Images') {
+            steps {
+                // 既然是 all-latest，旧的 latest 在被新 latest 覆盖前会被标记为 <none>
+                // 这一步清理那些悬空的旧镜像，释放磁盘
+                sh "docker image prune -f"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Pipeline 执行成功! App is Live.'
+        }
+        failure {
+            echo '💥 Pipeline 失败!'
         }
     }
 }
